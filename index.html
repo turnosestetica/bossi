@@ -29,7 +29,7 @@
         // Detectar qué configuración de cliente usar
         const path = window.location.pathname;
         const filename = path.substring(path.lastIndexOf('/') + 1).replace('.html', '');
-        let pixelId = '9156680387744059'; // ID por defecto como fallback
+        let pixelId = '1222298238852708'; // ID del Pixel de Bossi como fallback
 
         // Buscar el ID del Pixel en la configuración
         if (CLIENTS_CONFIG && CLIENTS_CONFIG[filename] &&
@@ -38,6 +38,7 @@
             pixelId = CLIENTS_CONFIG[filename].facebookPixel.id;
             console.log('Usando Pixel ID de la configuración:', pixelId);
         } else {
+            pixelId = '1222298238852708'; // ID del Pixel de Bossi como fallback
             console.log('Usando Pixel ID por defecto:', pixelId);
         }
 
@@ -56,7 +57,7 @@
     document.addEventListener('DOMContentLoaded', initFacebookPixel);
     </script>
     <noscript><img id="fb-pixel-noscript" height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=9156680387744059&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=1222298238852708&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Meta Pixel Code -->
 
@@ -105,11 +106,11 @@
 
                 <div class="price-row valoracion-row">
                     <span class="price-label">Consulta de Evaluación</span>
-                    <span class="price-value">$30.000</span>
+                    <span class="price-value">$23.000</span>
                 </div>
                 <div class="price-row valoracion-detail">
-                    <span class="price-label">Pago anticipado (ahorro $7.000):</span>
-                    <span class="price-value">$23.000</span>
+                    <span class="price-label">Pago anticipado obligatorio para confirmar</span>
+                    <span class="price-value"></span>
                 </div>
                 <div class="price-list">
                     <div class="treatment-group">
@@ -171,7 +172,7 @@
                     <h4>IMPORTANTE: PAGO ANTICIPADO REQUERIDO</h4>
                     <p>Para confirmar tu cita es <strong>obligatorio</strong> realizar un pago anticipado de $23.000.</p>
                     <p>Opciones de pago: transferencia bancaria, depósito o pago online con tarjeta.</p>
-                    <p>Este pago se descuenta del costo total de la consulta ($30.000).</p>
+                    <p>Este pago corresponde al costo de la consulta de evaluación.</p>
                 </div>
             </div>
 
@@ -184,8 +185,8 @@
             <h2>Agenda tu consulta con la Dra. Constanza Bossi</h2>
 
             <div class="payment-reminder">
-                <p><strong>IMPORTANTE:</strong> Se requiere un pago anticipado de $23.000 para asegurar tu asistencia y confirmar tu cita de evaluación (ahorro de $7.000).</p>
-                <p>El costo en clínica es de $30.000. El pago anticipado será deducido del costo total del tratamiento.</p>
+                <p><strong>IMPORTANTE:</strong> Se requiere un pago anticipado de $23.000 para confirmar tu cita de evaluación.</p>
+                <p>Este pago es obligatorio para reservar tu consulta.</p>
             </div>
 
             <div class="form-steps">
@@ -236,7 +237,7 @@
 
                         <div class="payment-confirmation">
                             <input type="checkbox" id="payment-agreement" name="payment-agreement" required>
-                            <label for="payment-agreement">Entiendo que se requiere un pago anticipado de $23.000 para confirmar mi cita (ahorro $7.000)</label>
+                            <label for="payment-agreement">Entiendo que se requiere un pago anticipado de $23.000 para confirmar mi cita</label>
                         </div>
 
                         <div class="confirmation-footer">
@@ -275,7 +276,7 @@
 
                     <div class="confirmation-instructions">
                         <p id="save-redirect-text">Al dar clic en <strong>Finalizar</strong>, se guardarán los datos de tu cita y serás redireccionado al WhatsApp oficial de la Dra. Constanza Bossi para confirmar tu cita.</p>
-                        <p id="deposit-info-text">Recuerda que se requiere un pago anticipado de $23.000 para confirmar tu cita (ahorro de $7.000). El costo en clínica es de $30.000.</p>
+                        <p id="deposit-info-text">Recuerda que se requiere un pago anticipado de $23.000 para confirmar tu cita. Este pago es obligatorio para reservar tu consulta.</p>
                     </div>
 
                     <div class="confirmation-footer">
