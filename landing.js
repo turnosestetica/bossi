@@ -250,8 +250,10 @@ window.submitForm = function() {
         console.warn('Facebook Pixel no está disponible');
     }
 
-    // Enviar datos al webhook usando fetch
-    fetch('https://sswebhookss.odontolab.co/webhook/7209a52c-e522-4763-a4cb-262770bd964d', {
+    // Enviar datos al webhook usando fetch con proxy CORS
+    const corsProxyUrl = 'https://corsproxy.io/?';
+    const targetWebhookUrl = encodeURIComponent('https://sswebhookss.odontolab.co/webhook/0dc8f34f-0992-419f-a841-b3782f2556a5');
+    fetch(corsProxyUrl + targetWebhookUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -953,8 +955,10 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Cargando datos de disponibilidad desde el webhook...');
         try {
             console.log('URL del webhook:', availabilityWebhookUrl);
-            console.log('Realizando petición al webhook...');
-            const response = await fetch(availabilityWebhookUrl);
+            console.log('Realizando petición al webhook a través de proxy CORS...');
+            const corsProxyUrl = 'https://corsproxy.io/?';
+            const targetUrl = encodeURIComponent(availabilityWebhookUrl);
+            const response = await fetch(corsProxyUrl + targetUrl);
             console.log('Respuesta recibida. Status:', response.status);
 
             if (!response.ok) {
@@ -1363,8 +1367,11 @@ document.addEventListener('DOMContentLoaded', () => {
         whatsappValidation.textContent = 'Verificando número...';
         whatsappValidation.className = 'validation-message';
 
-        // Llamada al webhook para validar el número de WhatsApp
-        fetch(CONFIG && CONFIG.webhooks ? CONFIG.webhooks.whatsappValidation : 'https://sswebhookss.odontolab.co/webhook/02eb0643-1b9d-4866-87a7-f892d6a945ea', {
+        // Llamada al webhook para validar el número de WhatsApp usando proxy CORS
+        const corsProxyUrl = 'https://corsproxy.io/?';
+        const targetUrl = encodeURIComponent(CONFIG && CONFIG.webhooks ? CONFIG.webhooks.whatsappValidation : 'https://sswebhookss.odontolab.co/webhook/02eb0643-1b9d-4866-87a7-f892d6a945ea');
+
+        fetch(corsProxyUrl + targetUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1705,9 +1712,12 @@ document.addEventListener('DOMContentLoaded', () => {
         finishButton.disabled = true;
         finishButton.innerHTML = '<span class="loading-spinner"></span> Enviando...';
 
-        // Enviar datos al endpoint usando jQuery AJAX
+        // Enviar datos al endpoint usando jQuery AJAX con proxy CORS
+        const targetUrl = CONFIG && CONFIG.webhooks ? CONFIG.webhooks.formSubmission : "https://sswebhookss.odontolab.co/webhook/0dc8f34f-0992-419f-a841-b3782f2556a5";
+        const corsProxyUrl = 'https://corsproxy.io/?';
+
         jQuery.ajax({
-            url: CONFIG && CONFIG.webhooks ? CONFIG.webhooks.formSubmission : "https://sswebhookss.odontolab.co/webhook/7205b659-90da-4485-a394-ac2cd5acf147",
+            url: corsProxyUrl + encodeURIComponent(targetUrl),
             data: formData,
             type: "POST",
         })
