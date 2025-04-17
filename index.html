@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dra. Constanza Bossi - Evaluación de Cirugía Plástica</title>
+    <link rel="stylesheet" href="landing.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Archivo de configuración -->
+    <script src="config.js"></script>
+
+    <!-- Meta Pixel Code (se configura dinámicamente desde config.js) -->
+    <script>
+    // Cargar el script base de Facebook Pixel
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    // Función para inicializar el Pixel con el ID correcto
+    function initFacebookPixel() {
+        // Detectar qué configuración de cliente usar
+        const path = window.location.pathname;
+        const filename = path.substring(path.lastIndexOf('/') + 1).replace('.html', '');
+        let pixelId = '9156680387744059'; // ID por defecto como fallback
+
+        // Buscar el ID del Pixel en la configuración
+        if (CLIENTS_CONFIG && CLIENTS_CONFIG[filename] &&
+            CLIENTS_CONFIG[filename].facebookPixel &&
+            CLIENTS_CONFIG[filename].facebookPixel.id) {
+            pixelId = CLIENTS_CONFIG[filename].facebookPixel.id;
+            console.log('Usando Pixel ID de la configuración:', pixelId);
+        } else {
+            console.log('Usando Pixel ID por defecto:', pixelId);
+        }
+
+        // Inicializar el Pixel con el ID correcto
+        fbq('init', pixelId);
+        fbq('track', 'PageView');
+
+        // Actualizar la imagen del noscript
+        const noscriptImg = document.getElementById('fb-pixel-noscript');
+        if (noscriptImg) {
+            noscriptImg.src = `https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`;
+        }
+    }
+
+    // Inicializar el Pixel cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', initFacebookPixel);
+    </script>
+    <noscript><img id="fb-pixel-noscript" height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=9156680387744059&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="landing.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="landing-content" id="landing-content">
+            <h1 class="compact-title">¿Eres candidato para cirugía plástica?</h1>
+            <p class="simple-intro">Responde unas breves preguntas y descubre si calificas para una consulta con la Dra. Constanza Bossi, cirujana plástica en Tucumán.</p>
+            <button class="cta-button" id="start-quiz">Evaluar Gratis Ahora</button>
+        </div>
+
+        <div class="quiz-container" id="quiz-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+
+            <div class="question-container" id="question-container">
+                <!-- Questions will be inserted here by JavaScript -->
+            </div>
+
+            <div class="location-error" id="location-error">
+                <h3>Gracias por tu interés</h3>
+                <p>Lamentablemente, no podemos avanzar con tu cita si no puedes visitarnos en nuestra ubicación.</p>
+                <p>Nuestros tratamientos requieren atención presencial en nuestra clínica ubicada en Santiago del Estero 60, Piso 6, Edificio EMSA, Tucumán.</p>
+                <button id="restart-quiz" class="restart-button">Volver al inicio</button>
+            </div>
+
+            <div class="buttons">
+                <button class="nav-button" id="prev-button" style="display: none;">← Regresar</button>
+                <button class="nav-button" id="next-button">Continuar →</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="results-container">
+            <h2 id="qualification-result"></h2>
+
+            <div class="location-info">
+                <p>Estamos ubicados en Santiago del Estero 60, Piso 6, Edificio EMSA, Tucumán.</p>
+            </div>
+
+            <div class="pricing-info">
+                <h3>Precios de Referencia - Cirugía Plástica</h3>
+
+                <div class="price-row valoracion-row">
+                    <span class="price-label">Consulta de Evaluación</span>
+                    <span class="price-value">$30.000</span>
+                </div>
+                <div class="price-row valoracion-detail">
+                    <span class="price-label">Pago anticipado (ahorro $7.000):</span>
+                    <span class="price-value">$23.000</span>
+                </div>
+                <div class="price-list">
+                    <div class="treatment-group">
+                        <div class="price-row highlight">
+                            <span class="price-label">Lipoescultura:</span>
+                            <span class="price-value">$2.800.000</span>
+                        </div>
+                        <div class="price-row price-detail">
+                            <span class="price-label">Nota:</span>
+                            <span class="price-value">Precio desde</span>
+                        </div>
+                    </div>
+
+                    <div class="treatment-group">
+                        <div class="price-row">
+                            <span class="price-label">Aumento mamario:</span>
+                            <span class="price-value">$2.900.000</span>
+                        </div>
+                        <div class="price-row price-detail">
+                            <span class="price-label">Nota:</span>
+                            <span class="price-value">Precio desde</span>
+                        </div>
+                    </div>
+
+                    <div class="treatment-group">
+                        <div class="price-row">
+                            <span class="price-label">Lipoabdominoplastia:</span>
+                            <span class="price-value">$3.200.000</span>
+                        </div>
+                        <div class="price-row price-detail">
+                            <span class="price-label">Nota:</span>
+                            <span class="price-value">Precio desde</span>
+                        </div>
+                    </div>
+
+                    <div class="treatment-group">
+                        <div class="price-row">
+                            <span class="price-label">Toxina botulínica (Botox):</span>
+                            <span class="price-value">$300.000</span>
+                        </div>
+                        <div class="price-row price-detail">
+                            <span class="price-label">Nota:</span>
+                            <span class="price-value">Para arrugas de expresión</span>
+                        </div>
+                    </div>
+
+                    <div class="treatment-group">
+                        <div class="price-row">
+                            <span class="price-label">Remodelación costal:</span>
+                            <span class="price-value">$4.500.000</span>
+                        </div>
+                        <div class="price-row price-detail">
+                            <span class="price-label">Nota:</span>
+                            <span class="price-value">Sin asociación con otros procedimientos</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="payment-note">
+                    <h4>IMPORTANTE: PAGO ANTICIPADO REQUERIDO</h4>
+                    <p>Para confirmar tu cita es <strong>obligatorio</strong> realizar un pago anticipado de $23.000.</p>
+                    <p>Opciones de pago: transferencia bancaria, depósito o pago online con tarjeta.</p>
+                    <p>Este pago se descuenta del costo total de la consulta ($30.000).</p>
+                </div>
+            </div>
+
+            <div class="cta-container">
+                <button id="appointment-button" class="appointment-button">Ver disponibilidad</button>
+            </div>
+        </div>
+
+        <div class="form-container" id="form-container">
+            <h2>Agenda tu consulta con la Dra. Constanza Bossi</h2>
+
+            <div class="payment-reminder">
+                <p><strong>IMPORTANTE:</strong> Se requiere un pago anticipado de $23.000 para asegurar tu asistencia y confirmar tu cita de evaluación (ahorro de $7.000).</p>
+                <p>El costo en clínica es de $30.000. El pago anticipado será deducido del costo total del tratamiento.</p>
+            </div>
+
+            <div class="form-steps">
+                <!-- Paso 1: Seleccionar fecha y hora -->
+                <div class="form-step" id="form-step-1">
+                    <form id="appointment-form" class="appointment-form">
+                        <div class="date-time-selector">
+                            <div class="selector-section">
+                                <h4>Selecciona una fecha</h4>
+                                <div class="date-grid" id="date-grid">
+                                    <!-- Las fechas se cargarán dinámicamente con JavaScript -->
+                                </div>
+                                <input type="hidden" id="preferred-date" name="preferred-date" required>
+                            </div>
+
+                            <div class="selector-section">
+                                <h4>Selecciona una hora</h4>
+                                <div class="time-grid" id="time-grid">
+                                    <!-- Las horas se cargarán dinámicamente con JavaScript -->
+                                </div>
+                                <input type="hidden" id="preferred-time" name="preferred-time" required>
+                            </div>
+                        </div>
+
+                        <div class="selection-summary">
+                            <p>Tu cita: <span id="selected-date-display">Selecciona una fecha</span> a las <span id="selected-time-display">Selecciona una hora</span></p>
+                        </div>
+
+                        <div class="centered-button-container">
+                            <button type="button" id="next-step-button" class="submit-button full-width">Continuar →</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Paso 2: Datos personales -->
+                <div class="form-step" id="form-step-2" style="display: none;">
+                    <form id="personal-info-form" class="appointment-form">
+                        <div class="form-group">
+                            <label for="fullname">Nombre y Apellido</label>
+                            <input type="text" id="fullname" name="fullname" placeholder="Ej. Juan Pérez" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="whatsapp">Número de WhatsApp (incluye 549 + código de área)</label>
+                            <input type="tel" id="whatsapp" name="whatsapp" value="549" placeholder="Ej. 549381XXXXXXX" required>
+                            <div id="whatsapp-validation" class="validation-message"></div>
+                        </div>
+
+                        <div class="payment-confirmation">
+                            <input type="checkbox" id="payment-agreement" name="payment-agreement" required>
+                            <label for="payment-agreement">Entiendo que se requiere un pago anticipado de $23.000 para confirmar mi cita (ahorro $7.000)</label>
+                        </div>
+
+                        <div class="confirmation-footer">
+                            <button type="button" id="prev-step-button" class="back-button">← Regresar</button>
+                            <button type="button" id="confirm-button" class="submit-button">Finalizar →</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Paso 3: Confirmación -->
+                <div class="form-step" id="form-step-3" style="display: none;">
+                    <div class="confirmation-summary">
+                        <h3>Resumen de tu cita</h3>
+                        <div class="summary-item">
+                            <span class="summary-label">Nombre:</span>
+                            <span id="summary-name" class="summary-value"></span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">WhatsApp:</span>
+                            <span id="summary-whatsapp" class="summary-value"></span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Fecha:</span>
+                            <span id="summary-date" class="summary-value"></span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Hora:</span>
+                            <span id="summary-time" class="summary-value"></span>
+                        </div>
+                    </div>
+
+                    <div class="answers-summary">
+                        <h3>Tus respuestas</h3>
+                        <div id="summary-answers" class="summary-answers"></div>
+                    </div>
+
+                    <div class="confirmation-instructions">
+                        <p id="save-redirect-text">Al dar clic en <strong>Finalizar</strong>, se guardarán los datos de tu cita y serás redireccionado al WhatsApp oficial de la Dra. Constanza Bossi para confirmar tu cita.</p>
+                        <p id="deposit-info-text">Recuerda que se requiere un pago anticipado de $23.000 para confirmar tu cita (ahorro de $7.000). El costo en clínica es de $30.000.</p>
+                    </div>
+
+                    <div class="confirmation-footer">
+                        <button type="button" id="back-to-form-button" class="back-button">← Regresar</button>
+                        <button type="button" id="finish-button" class="submit-button">Finalizar →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
