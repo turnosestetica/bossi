@@ -29,13 +29,13 @@ const CLIENTS_CONFIG = {
       priceNote: "Podrías ser candidato para un procedimiento de cirugía plástica. Para comprobarlo, solicita una cita de evaluación.",
       confirmationText: {
         saveAndRedirect: "Al dar clic en <strong>Finalizar</strong>, se guardarán los datos de tu cita y serás redireccionado al WhatsApp oficial de la Dra. Constanza Bossi para confirmar tu cita.",
-        depositInfo: "Recuerda que se requiere un pago anticipado de $23.000 para confirmar tu cita. Este pago es obligatorio para reservar tu consulta."
+        depositInfo: "Recuerda que se requiere el pago anticipado de la cita de $23.000 para confirmar tu turno."
       },
       whatsappMessage: {
         greeting: "Hola, soy {nombre} y me interesa agendar una consulta con la Dra. Constanza Bossi.",
         contactInfo: "*DATOS DE CONTACTO*\n- Nombre: {nombre}\n- WhatsApp: {whatsapp}",
         appointmentInfo: "*CITA SOLICITADA*\n- Fecha: {fecha}\n- Hora: {hora}",
-        depositInfo: "*ENTIENDO QUE:*\n- Se requiere un pago anticipado de $23.000 para confirmar mi cita\n- Este pago es obligatorio para reservar la consulta",
+        depositInfo: "*ENTIENDO QUE:*\n- Se requiere el pago anticipado de la cita de $23.000 para confirmar mi turno",
         questionnaireInfo: "*RESPUESTAS DEL CUESTIONARIO*\n{respuestas}",
         treatmentType: "cirugía plástica"
       }

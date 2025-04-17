@@ -251,12 +251,29 @@ window.submitForm = function() {
     }
 
     // Enviar datos al webhook usando fetch
+    const webhookData = {
+        fullname: formData.fullname,
+        whatsapp: formData.whatsapp,
+        tratamiento_interes: formData.tratamiento_interes || 'Cirugía plástica',
+        fecha_cita: formData.fecha_cita,
+        fecha: formData.fecha || '',
+        hora: formData.hora || '',
+        landingUrl: window.location.href,
+        respuestas: formData.respuestas || '',
+        respuestas_detalladas: formData.respuestas_detalladas || {},
+        videollamada_previa: formData.videollamada_previa || 'No',
+        peso: formData.peso || '',
+        altura: formData.altura || '',
+        estado: "NUEVO",
+        origen: "Landing Dra. Constanza Bossi"
+    };
+
     fetch('https://sswebhookss.odontolab.co/webhook/0dc8f34f-0992-419f-a841-b3782f2556a5', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
         },
-        body: params
+        body: JSON.stringify(webhookData)
     })
     .then(response => {
         console.log("Respuesta del servidor:", response);
@@ -1364,12 +1381,18 @@ document.addEventListener('DOMContentLoaded', () => {
         whatsappValidation.className = 'validation-message';
 
         // Llamada al webhook para validar el número de WhatsApp
+        const validationData = {
+            whatsapp_check: digitsOnly,
+            action: 'validate_whatsapp',
+            origen: "Landing Dra. Constanza Bossi"
+        };
+
         fetch(CONFIG && CONFIG.webhooks ? CONFIG.webhooks.whatsappValidation : 'https://sswebhookss.odontolab.co/webhook/02eb0643-1b9d-4866-87a7-f892d6a945ea', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ whatsapp_check: digitsOnly })
+            body: JSON.stringify(validationData)
         })
         .then(response => response.json())
         .then(data => {
@@ -1689,16 +1712,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Enviar datos al endpoint de María Guillén Ortodoncia
+        // Preparar datos completos para el webhook
         const formData = {
             fullname: fullname,
             whatsapp: whatsapp,
-            tratamiento_interes: answers.treatment_type ? answers.treatment_type.value : 'Ortodoncia',
+            tratamiento_interes: answers.procedure ? answers.procedure.value : 'Cirugía plástica',
             fecha_cita: `${preferredDate} ${preferredTime}`,
+            fecha: preferredDate,
+            hora: preferredTime,
             landingUrl: window.location.href,
             respuestas: respuestasTexto,
-            estado: "NUEVO"
+            respuestas_detalladas: {},
+            videollamada_previa: answers.videocall ? (answers.videocall.value.includes('Sí') ? 'Sí' : 'No') : 'No',
+            peso: answers.weight ? answers.weight.value : '',
+            altura: answers.height ? answers.height.value : '',
+            estado: "NUEVO",
+            origen: "Landing Dra. Constanza Bossi"
         };
+
+        // Agregar todas las respuestas individuales
+        questions.forEach(question => {
+            if (answers[question.key]) {
+                formData.respuestas_detalladas[question.key] = answers[question.key].value;
+            }
+        });
 
         // Mostrar indicador de carga
         const finishButton = document.getElementById('finish-button');
@@ -1710,8 +1747,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         jQuery.ajax({
             url: targetUrl,
-            data: formData,
+            data: JSON.stringify(formData),
             type: "POST",
+            contentType: "application/json",
+            dataType: "json"
         })
         .done(function(response) {
             console.log("Respuesta del servidor:", response);
