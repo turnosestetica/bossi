@@ -790,7 +790,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update progress bar
     function updateProgressBar() {
         const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-        progressBar.style.width = `${progress}%`;
+        if (progressBar) {
+            progressBar.style.width = `${progress}%`;
+        }
     }
 
     // Show results
@@ -893,6 +895,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     });
 
+    // Inicializar el cuestionario automáticamente al cargar la página
+    // ya que estamos saltando la pantalla inicial
+    initQuiz();
+    updateButtons();
+    updateProgressBar();
+
+    // Tracking: Inicio del cuestionario (Paso 1)
+    if (typeof fbq !== 'undefined') {
+        console.log('Tracking: Paso1_InicioQuiz');
+        fbq('trackCustom', 'Paso1_InicioQuiz', {
+            event_category: 'Quiz',
+            event_label: 'Inicio del cuestionario'
+        });
+    }
+
     nextButton.addEventListener('click', nextQuestion);
     prevButton.addEventListener('click', prevQuestion);
 
@@ -903,25 +920,17 @@ document.addEventListener('DOMContentLoaded', () => {
         questionContainer.style.display = 'block';
         document.querySelector('.buttons').style.display = 'flex';
 
-        // Go back to the landing page
-        quizContainer.style.opacity = '0';
+        // Reset answers and current question
+        Object.keys(answers).forEach(key => delete answers[key]);
+        currentQuestionIndex = 0;
 
-        setTimeout(() => {
-            quizContainer.style.display = 'none';
-            landingContent.style.display = 'flex';
+        // Clear question container
+        questionContainer.innerHTML = '';
 
-            // Reset answers and current question
-            Object.keys(answers).forEach(key => delete answers[key]);
-            currentQuestionIndex = 0;
-
-            // Clear question container
-            questionContainer.innerHTML = '';
-
-            // Fade in landing content
-            setTimeout(() => {
-                landingContent.style.opacity = '1';
-            }, 50);
-        }, 300);
+        // Reiniciar el cuestionario directamente
+        initQuiz();
+        updateButtons();
+        updateProgressBar();
     });
 
     // Handle appointment button click
@@ -1629,8 +1638,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Encode the message for URL
-        const encodedMessage = encodeURIComponent(message);
+        // Mensaje preparado para uso posterior
+        console.log('Mensaje preparado:', message);
 
         // Tracking: Confirmación de datos
         if (typeof fbq !== 'undefined') {

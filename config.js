@@ -60,14 +60,14 @@ const CLIENTS_CONFIG = {
     // Preguntas del cuestionario
     questions: [
       {
+        question: "¿Qué procedimiento te interesa?",
+        options: ["Lipoescultura", "Aumento mamario", "Lipoabdominoplastia", "Tratamientos estéticos no quirúrgicos", "Remodelación costal", "Otro procedimiento"],
+        key: "procedure"
+      },
+      {
         question: "¿Puedes asistir a nuestra clínica en Santiago del Estero 60, Piso 6, Edificio EMSA, Tucumán?",
         options: ["Sí, puedo asistir", "No, me queda muy lejos"],
         key: "location"
-      },
-      {
-        question: "¿Qué tipo de procedimiento te interesa?",
-        options: ["Lipoescultura", "Aumento mamario", "Lipoabdominoplastia", "Tratamientos estéticos no quirúrgicos", "Remodelación costal", "Otro procedimiento"],
-        key: "procedure"
       },
       {
         question: "¿Has tenido alguna cirugía plástica anteriormente?",
