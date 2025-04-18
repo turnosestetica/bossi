@@ -956,14 +956,52 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        setTimeout(() => {
-            resultsContainer.style.display = 'none';
-            formContainer.style.display = 'flex';
+        // Mostrar un indicador de carga mientras se obtienen las fechas disponibles
+        appointmentButton.disabled = true;
+        appointmentButton.innerHTML = '<span class="loading-spinner"></span> Consultando agenda de la Dra. Bossi...';
 
-            // Fade in form container
-            setTimeout(() => {
-                formContainer.style.opacity = '1';
-            }, 50);
+        // Primero ocultar el contenedor de resultados
+        resultsContainer.style.opacity = '0';
+
+        setTimeout(() => {
+            // Ocultar completamente el contenedor de resultados
+            resultsContainer.style.display = 'none';
+
+            // Mostrar el formulario inmediatamente
+            formContainer.style.display = 'flex';
+            formContainer.style.opacity = '1';
+
+            // Mostrar los mensajes de carga en las secciones de fechas y horas
+            const dateGrid = document.getElementById('date-grid');
+            const timeGrid = document.getElementById('time-grid');
+            const loadingDates = document.getElementById('loading-dates');
+            const loadingTimes = document.getElementById('loading-times');
+
+            if (dateGrid) dateGrid.style.display = 'none';
+            if (timeGrid) timeGrid.style.display = 'none';
+            if (loadingDates) loadingDates.style.display = 'flex';
+            if (loadingTimes) loadingTimes.style.display = 'flex';
+
+            // Cargar las fechas disponibles desde el webhook
+            loadAvailabilityData().then(success => {
+                // Restaurar el botón a su estado original
+                appointmentButton.disabled = false;
+                appointmentButton.innerHTML = 'Ver disponibilidad';
+
+                if (!success) {
+                    // Si hubo un error al cargar las fechas, mostrar un mensaje
+                    alert('Hubo un problema al cargar las fechas disponibles. Por favor, intenta nuevamente.');
+                    // Volver a la pantalla anterior
+                    formContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        formContainer.style.display = 'none';
+                        resultsContainer.style.display = 'flex';
+                        setTimeout(() => {
+                            resultsContainer.style.opacity = '1';
+                        }, 50);
+                    }, 300);
+                }
+            });
         }, 300);
     });
 
@@ -1066,6 +1104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('%c=== CARGANDO FECHAS DISPONIBLES ===', 'background: #e74c3c; color: white; padding: 5px; border-radius: 5px;');
         const dateInput = document.getElementById('preferred-date');
         const dateGrid = document.getElementById('date-grid');
+        const loadingDates = document.getElementById('loading-dates');
         console.log('Input de fechas encontrado:', dateInput ? 'Sí' : 'No');
         console.log('Grid de fechas encontrado:', dateGrid ? 'Sí' : 'No');
 
@@ -1172,6 +1211,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Ocultar el mensaje de carga y mostrar las fechas
+        if (loadingDates) loadingDates.style.display = 'none';
+        if (dateGrid) dateGrid.style.display = 'grid';
+
         console.log('Fechas cargadas en el grid');
     }
 
@@ -1181,9 +1224,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateInput = document.getElementById('preferred-date');
         const timeInput = document.getElementById('preferred-time');
         const timeGrid = document.getElementById('time-grid');
+        const loadingTimes = document.getElementById('loading-times');
         console.log('Input de fechas encontrado:', dateInput ? 'Sí' : 'No');
         console.log('Input de horas encontrado:', timeInput ? 'Sí' : 'No');
         console.log('Grid de horas encontrado:', timeGrid ? 'Sí' : 'No');
+
+        // Mostrar el mensaje de carga y ocultar el grid de horas
+        if (loadingTimes) loadingTimes.style.display = 'flex';
+        if (timeGrid) timeGrid.style.display = 'none';
 
         // Limpiar el grid de horas
         console.log('Limpiando grid de horas...');
@@ -1337,14 +1385,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 timeGrid.appendChild(timeOption);
             });
+
+            // Ocultar el mensaje de carga y mostrar las horas
+            if (loadingTimes) loadingTimes.style.display = 'none';
+            if (timeGrid) timeGrid.style.display = 'grid';
+
             console.log('Horarios cargados en el grid');
         } else {
             console.error('No se pudieron cargar los horarios porque no es un array');
+
+            // Mostrar un mensaje de error en lugar del spinner
+            if (loadingTimes) {
+                loadingTimes.innerHTML = '<p>No hay horarios disponibles para esta fecha. Por favor, selecciona otra fecha.</p>';
+            }
         }
     }
 
-    // Cargar fechas y horas desde el webhook al iniciar
-    loadAvailabilityData();
+    // Ya no cargamos las fechas al iniciar, sino cuando el usuario hace clic en "Ver disponibilidad"
 
     // Obtener referencia al campo de WhatsApp
     const whatsappField = document.getElementById('whatsapp');
@@ -1353,7 +1410,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (whatsappField.value === '') {
         whatsappField.value = '521';
     }
-    loadAvailableHours();
 
     // WhatsApp validation
     const whatsappInput = whatsappField; // Usar la misma referencia

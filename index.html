@@ -214,6 +214,11 @@
                                 <div class="date-grid" id="date-grid">
                                     <!-- Las fechas se cargarán dinámicamente con JavaScript -->
                                 </div>
+                                <div class="loading-dates" id="loading-dates">
+                                    <div class="loading-spinner-large"></div>
+                                    <p>Consultando fechas disponibles en la agenda de la Dra. Bossi...</p>
+                                    <p style="font-size: 0.9rem; margin-top: 5px; color: #666;">Este proceso puede tomar unos segundos. Por favor, espere.</p>
+                                </div>
                                 <input type="hidden" id="preferred-date" name="preferred-date" required>
                             </div>
 
@@ -221,6 +226,11 @@
                                 <h4>Selecciona una hora</h4>
                                 <div class="time-grid" id="time-grid">
                                     <!-- Las horas se cargarán dinámicamente con JavaScript -->
+                                </div>
+                                <div class="loading-times" id="loading-times">
+                                    <div class="loading-spinner-large"></div>
+                                    <p>Selecciona primero una fecha para ver los horarios disponibles</p>
+                                    <p style="font-size: 0.9rem; margin-top: 5px; color: #666;">Los horarios se mostrarán una vez que elijas una fecha</p>
                                 </div>
                                 <input type="hidden" id="preferred-time" name="preferred-time" required>
                             </div>
