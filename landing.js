@@ -907,6 +907,42 @@ document.addEventListener('DOMContentLoaded', () => {
         buttonStatusMessage.textContent = 'Verifica tu número de WhatsApp para continuar';
     }
 
+    // Deshabilitar el botón de confirmación por defecto
+    const confirmButton = document.getElementById('confirm-button');
+    if (confirmButton) {
+        confirmButton.disabled = true;
+    }
+
+    // Manejar el cambio en el checkbox de pago
+    const paymentAgreement = document.getElementById('payment-agreement');
+    if (paymentAgreement) {
+        paymentAgreement.addEventListener('change', function() {
+            const buttonStatusMessage = document.getElementById('button-status-message');
+            const whatsappInput = document.getElementById('whatsapp');
+            const whatsappDigits = whatsappInput ? whatsappInput.value.replace(/\D/g, '') : '';
+            const whatsappValid = whatsappDigits.length >= 10 && whatsappDigits.length <= 15;
+
+            // Habilitar el botón solo si el checkbox está marcado y el WhatsApp es válido
+            if (confirmButton) {
+                confirmButton.disabled = !(this.checked && whatsappValid);
+            }
+
+            // Actualizar el mensaje de estado
+            if (buttonStatusMessage) {
+                if (!this.checked) {
+                    buttonStatusMessage.textContent = 'Debes aceptar el requisito de depósito';
+                    buttonStatusMessage.className = 'button-status-message error';
+                } else if (!whatsappValid) {
+                    buttonStatusMessage.textContent = 'Verifica tu número de WhatsApp';
+                    buttonStatusMessage.className = 'button-status-message error';
+                } else {
+                    buttonStatusMessage.textContent = 'Todos los datos son correctos';
+                    buttonStatusMessage.className = 'button-status-message success';
+                }
+            }
+        });
+    }
+
     // Tracking: Inicio del cuestionario (Paso 1)
     if (typeof fbq !== 'undefined') {
         console.log('Tracking: Paso1_InicioQuiz');
@@ -1426,6 +1462,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Limpiar el mensaje de validación cuando el usuario escribe
         whatsappValidation.textContent = '';
         whatsappValidation.className = 'validation-message';
+
+        // Deshabilitar el botón de confirmación mientras se está escribiendo
+        const confirmButton = document.getElementById('confirm-button');
+        const buttonStatusMessage = document.getElementById('button-status-message');
+        if (confirmButton) {
+            confirmButton.disabled = true;
+        }
+        if (buttonStatusMessage) {
+            buttonStatusMessage.textContent = 'Verifica tu número de WhatsApp para continuar';
+            buttonStatusMessage.className = 'button-status-message';
+        }
     });
 
     // Validar el número de WhatsApp cuando el usuario termina de escribir
@@ -1474,21 +1521,79 @@ document.addEventListener('DOMContentLoaded', () => {
                     // El número existe en WhatsApp
                     whatsappValidation.textContent = 'Número de WhatsApp válido';
                     whatsappValidation.className = 'validation-message success';
+
+                    // Actualizar el estado del botón y el mensaje
+                    const confirmButton = document.getElementById('confirm-button');
+                    const buttonStatusMessage = document.getElementById('button-status-message');
+                    const paymentAgreement = document.getElementById('payment-agreement');
+
+                    if (confirmButton && paymentAgreement) {
+                        confirmButton.disabled = !paymentAgreement.checked;
+                    }
+
+                    if (buttonStatusMessage) {
+                        if (paymentAgreement && !paymentAgreement.checked) {
+                            buttonStatusMessage.textContent = 'Debes aceptar el requisito de depósito';
+                            buttonStatusMessage.className = 'button-status-message error';
+                        } else {
+                            buttonStatusMessage.textContent = 'Número de WhatsApp válido';
+                            buttonStatusMessage.className = 'button-status-message success';
+                        }
+                    }
                 } else {
                     // El número no existe en WhatsApp
                     whatsappValidation.textContent = 'Este número no tiene WhatsApp activo';
                     whatsappValidation.className = 'validation-message error';
+
+                    // Deshabilitar el botón y actualizar el mensaje
+                    const confirmButton = document.getElementById('confirm-button');
+                    const buttonStatusMessage = document.getElementById('button-status-message');
+
+                    if (confirmButton) {
+                        confirmButton.disabled = true;
+                    }
+
+                    if (buttonStatusMessage) {
+                        buttonStatusMessage.textContent = 'Número de WhatsApp inválido';
+                        buttonStatusMessage.className = 'button-status-message error';
+                    }
                 }
             } else {
                 // Respuesta inesperada de la API
                 whatsappValidation.textContent = 'No se pudo verificar el número';
                 whatsappValidation.className = 'validation-message error';
+
+                // Deshabilitar el botón y actualizar el mensaje
+                const confirmButton = document.getElementById('confirm-button');
+                const buttonStatusMessage = document.getElementById('button-status-message');
+
+                if (confirmButton) {
+                    confirmButton.disabled = true;
+                }
+
+                if (buttonStatusMessage) {
+                    buttonStatusMessage.textContent = 'No se pudo verificar el número de WhatsApp';
+                    buttonStatusMessage.className = 'button-status-message error';
+                }
             }
         })
         .catch(error => {
             console.error('Error validando WhatsApp:', error);
             whatsappValidation.textContent = 'Error al verificar el número';
             whatsappValidation.className = 'validation-message error';
+
+            // Deshabilitar el botón y actualizar el mensaje
+            const confirmButton = document.getElementById('confirm-button');
+            const buttonStatusMessage = document.getElementById('button-status-message');
+
+            if (confirmButton) {
+                confirmButton.disabled = true;
+            }
+
+            if (buttonStatusMessage) {
+                buttonStatusMessage.textContent = 'Error al verificar el número de WhatsApp';
+                buttonStatusMessage.className = 'button-status-message error';
+            }
         });
     });
 
