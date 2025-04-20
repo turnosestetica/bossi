@@ -901,6 +901,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateButtons();
     updateProgressBar();
 
+    // Inicializar el mensaje de estado del botón
+    const buttonStatusMessage = document.getElementById('button-status-message');
+    if (buttonStatusMessage) {
+        buttonStatusMessage.textContent = 'Verifica tu número de WhatsApp para continuar';
+    }
+
     // Tracking: Inicio del cuestionario (Paso 1)
     if (typeof fbq !== 'undefined') {
         console.log('Tracking: Paso1_InicioQuiz');
@@ -1616,6 +1622,61 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mostrar el paso 2 (datos personales)
         document.getElementById('form-step-1').style.display = 'none';
         document.getElementById('form-step-2').style.display = 'block';
+
+        // Hacer scroll hacia arriba para que el usuario vea el inicio del formulario
+        // Función mejorada para asegurar que el scroll funcione en todos los dispositivos
+        const scrollToTop = () => {
+            console.log('Ejecutando scrollToTop en next-step-button');
+            // Scroll inmediato a la parte superior absoluta
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0; // Para Safari
+            document.documentElement.scrollTop = 0; // Para Chrome, Firefox, IE y Opera
+
+            // Forzar el scroll a la parte superior con un enfoque en el primer elemento visible
+            const header = document.querySelector('header');
+            if (header) {
+                console.log('Enfocando header');
+                header.scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
+
+            // Enfocar el título del formulario (que está en la parte superior)
+            const formTitle = document.querySelector('.form-container h2');
+            if (formTitle) {
+                console.log('Enfocando título del formulario');
+                formTitle.scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
+
+            // También intentar enfocar el mensaje de pago anticipado
+            const paymentReminder = document.querySelector('.payment-reminder');
+            if (paymentReminder) {
+                console.log('Enfocando recordatorio de pago');
+                paymentReminder.scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
+
+            // Enfocar el contenedor del formulario desde el inicio
+            const formContainer = document.querySelector('.form-container');
+            if (formContainer) {
+                console.log('Enfocando contenedor del formulario');
+                formContainer.scrollIntoView({ behavior: 'auto', block: 'start' });
+                // Establecer el scroll a 0 dentro del contenedor
+                formContainer.scrollTop = 0;
+            }
+
+            // Enfocar el primer campo del formulario solo después de asegurar que la página está arriba
+            const fullnameInput = document.getElementById('fullname');
+            if (fullnameInput) {
+                console.log('Enfocando campo de nombre');
+                fullnameInput.focus();
+            }
+        };
+
+        // Ejecutar inmediatamente
+        scrollToTop();
+
+        // Y también con retraso para asegurar que funcione después de que el DOM se actualice
+        setTimeout(scrollToTop, 100);
+        setTimeout(scrollToTop, 500);
+        setTimeout(scrollToTop, 1000);
     });
 
     // Manejar el clic en el botón de regresar al paso 1
@@ -1644,6 +1705,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const preferredDate = document.getElementById('preferred-date').value;
         const preferredTime = document.getElementById('preferred-time').value;
 
+        // Referencia al mensaje de estado del botón
+        const buttonStatusMessage = document.getElementById('button-status-message');
+
         // Validar que se hayan ingresado nombre y WhatsApp
         if (!fullname || fullname.trim() === '') {
             alert('Por favor ingresa tu nombre completo.');
@@ -1662,13 +1726,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (whatsappDigits.length < 10 || whatsappDigits.length > 15) {
             alert('Por favor ingresa un número de WhatsApp válido (al menos 10 dígitos).');
             document.getElementById('whatsapp').focus();
+            if (buttonStatusMessage) {
+                buttonStatusMessage.textContent = 'Número de WhatsApp inválido';
+                buttonStatusMessage.className = 'button-status-message error';
+            }
             return;
+        } else {
+            // WhatsApp válido
+            if (buttonStatusMessage) {
+                buttonStatusMessage.textContent = 'Número de WhatsApp válido';
+                buttonStatusMessage.className = 'button-status-message success';
+            }
         }
 
         // Validar que se haya aceptado el requisito de depósito
         if (!document.getElementById('payment-agreement').checked) {
             alert('Debes aceptar el requisito de depósito para continuar.');
+            if (buttonStatusMessage) {
+                buttonStatusMessage.textContent = 'Debes aceptar el requisito de depósito';
+                buttonStatusMessage.className = 'button-status-message error';
+            }
             return;
+        } else {
+            // Todo validado correctamente
+            if (buttonStatusMessage) {
+                buttonStatusMessage.textContent = 'Todos los datos son correctos';
+                buttonStatusMessage.className = 'button-status-message success';
+            }
         }
 
         // Obtener la fecha seleccionada (ya no necesitamos buscar el texto visible porque usamos botones)
@@ -1712,6 +1796,54 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mostrar el paso 3 (confirmación)
         document.getElementById('form-step-2').style.display = 'none';
         document.getElementById('form-step-3').style.display = 'block';
+
+        // Hacer scroll hacia arriba para que el usuario vea el inicio del formulario
+        // Función mejorada para asegurar que el scroll funcione en todos los dispositivos
+        const scrollToTop = () => {
+            console.log('Ejecutando scrollToTop en confirm-button');
+            // Scroll inmediato a la parte superior absoluta
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0; // Para Safari
+            document.documentElement.scrollTop = 0; // Para Chrome, Firefox, IE y Opera
+
+            // Forzar el scroll a la parte superior con un enfoque en el primer elemento visible
+            const header = document.querySelector('header');
+            if (header) {
+                console.log('Enfocando header');
+                header.scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
+
+            // Enfocar el título del formulario (que está en la parte superior)
+            const formTitle = document.querySelector('.form-container h2');
+            if (formTitle) {
+                console.log('Enfocando título del formulario');
+                formTitle.scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
+
+            // También intentar enfocar el resumen de la cita
+            const confirmationSummary = document.querySelector('.confirmation-summary');
+            if (confirmationSummary) {
+                console.log('Enfocando resumen de confirmación');
+                confirmationSummary.scrollIntoView({ behavior: 'auto', block: 'start' });
+            }
+
+            // Enfocar el contenedor del formulario desde el inicio
+            const formContainer = document.querySelector('.form-container');
+            if (formContainer) {
+                console.log('Enfocando contenedor del formulario');
+                formContainer.scrollIntoView({ behavior: 'auto', block: 'start' });
+                // Establecer el scroll a 0 dentro del contenedor
+                formContainer.scrollTop = 0;
+            }
+        };
+
+        // Ejecutar inmediatamente
+        scrollToTop();
+
+        // Y también con retraso para asegurar que funcione después de que el DOM se actualice
+        setTimeout(scrollToTop, 100);
+        setTimeout(scrollToTop, 500);
+        setTimeout(scrollToTop, 1000);
 
         // Actualizar los datos de resumen
         document.getElementById('summary-name').textContent = fullname;

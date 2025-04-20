@@ -1,0 +1,30 @@
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración de IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos de dependencias
+node_modules/
+vendor/
+
+# Archivos de compilación
+dist/
+build/
+*.min.js
+*.min.css
+
+# Archivos de log
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos temporales
+*.tmp
+*.swp
+*.swo

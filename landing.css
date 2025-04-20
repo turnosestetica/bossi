@@ -587,6 +587,13 @@ body {
     margin-bottom: 1rem;
     color: var(--primary-color);
     text-align: center;
+    padding-top: 1rem;
+    scroll-margin-top: 1rem;
+    position: relative;
+    z-index: 10;
+    background-color: white;
+    border-bottom: 2px solid var(--highlight-color-light);
+    padding-bottom: 0.8rem;
 }
 
 .form-container h3 {
@@ -602,12 +609,17 @@ body {
     border-radius: var(--border-radius);
     padding: 1rem;
     margin-bottom: 1.5rem;
+    border-left: 4px solid #ffc107;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    scroll-margin-top: 1rem;
 }
 
 .payment-reminder p {
     color: #856404;
-    font-size: 0.9rem;
+    font-size: 1rem;
     margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.4;
 }
 
 .payment-reminder p:last-child {
@@ -746,18 +758,27 @@ body {
 
 .payment-confirmation {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 1.5rem;
+    background-color: var(--highlight-color-light);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--highlight-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .payment-confirmation input {
-    margin-right: 0.5rem;
-    margin-top: 0.3rem;
+    margin-right: 0.8rem;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-color);
 }
 
 .payment-confirmation label {
-    font-size: 0.9rem;
+    font-size: 1rem;
     line-height: 1.4;
+    font-weight: 500;
+    color: #333;
 }
 
 .form-buttons {
@@ -1255,8 +1276,21 @@ body {
         font-size: 0.95rem;
     }
 
+    /* Mejorar el checkbox en móviles */
+    .payment-confirmation {
+        padding: 0.8rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .payment-confirmation input {
+        width: 24px;
+        height: 24px;
+        margin-right: 0.6rem;
+    }
+
     .payment-confirmation label {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
+        line-height: 1.3;
     }
 
     .confirmation-footer {
@@ -1282,6 +1316,40 @@ body {
     color: var(--primary-color);
     font-weight: 500;
     animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Contenedor del botón y su mensaje de estado */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+}
+
+/* Mensaje de estado del botón */
+.button-status-message {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.button-status-message.error {
+    color: #d9534f;
+    font-weight: 500;
+}
+
+.button-status-message.success {
+    color: #5cb85c;
+    font-weight: 500;
+}
+
+/* Estilos para móviles */
+@media (max-width: 768px) {
+    .button-status-message {
+        font-size: 0.8rem;
+        margin-top: 0.4rem;
+    }
 }
 
 @keyframes fadeIn {
