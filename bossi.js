@@ -1271,6 +1271,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (whatsappInput) {
                 console.log('Enfocando campo de WhatsApp');
                 whatsappInput.focus();
+
+                // Posicionar el cursor al final del valor precargado
+                const valorPrecargado = whatsappInput.value;
+                if (valorPrecargado) {
+                    // Usar setTimeout para asegurar que el foco ya está establecido
+                    setTimeout(() => {
+                        // Mover el cursor al final del texto
+                        whatsappInput.selectionStart = whatsappInput.selectionEnd = valorPrecargado.length;
+                    }, 50);
+                }
             }
         }, 100);
     });
@@ -1298,6 +1308,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (whatsappInput) {
                 console.log('Enfocando campo de WhatsApp');
                 whatsappInput.focus();
+
+                // Posicionar el cursor al final del valor precargado
+                const valorPrecargado = whatsappInput.value;
+                if (valorPrecargado) {
+                    // Usar setTimeout para asegurar que el foco ya está establecido
+                    setTimeout(() => {
+                        // Mover el cursor al final del texto
+                        whatsappInput.selectionStart = whatsappInput.selectionEnd = valorPrecargado.length;
+                    }, 50);
+                }
             }
         }, 100);
     });
