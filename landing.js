@@ -1765,14 +1765,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('form-step-1').style.display = 'block';
     });
 
-    // Manejar el clic en el botón de regresar al paso 2
-    document.getElementById('back-to-form-button').addEventListener('click', () => {
-        console.log('Back to form button clicked');
-
-        // Mostrar el paso 2 (datos personales) y ocultar el paso 3 (confirmación)
-        document.getElementById('form-step-3').style.display = 'none';
-        document.getElementById('form-step-2').style.display = 'block';
-    });
+    // Ya no necesitamos el manejador para el botón 'back-to-form-button' porque hemos eliminado el paso 3 (confirmación)
     // Redirigir el clic en el botón de confirmación al botón de finalizar
     document.getElementById('confirm-button').addEventListener('click', () => {
         console.log('Confirm button clicked, redirecting to finish button');
