@@ -1321,9 +1321,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, 100);
     });
-    // Manejar el clic en el botón de confirmación
-    document.getElementById('confirm-button').addEventListener('click', () => {
-        console.log('Confirm button clicked');
+    // Ya no necesitamos el manejador para el botón 'confirm-button' porque lo hemos reemplazado por 'finish-button'
+
+    // Manejar el clic en el botón de finalizar
+    document.getElementById('finish-button').addEventListener('click', () => {
+        console.log('Finish button clicked');
+
         // Get form values
         const fullname = document.getElementById('fullname').value;
         const whatsapp = document.getElementById('whatsapp').value;
@@ -1351,84 +1354,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Ya no es necesario validar el checkbox de pago anticipado porque se ha eliminado
-        // El usuario ya está informado sobre el requisito de depósito a través del texto informativo
-
-        // Obtener la fecha seleccionada (ya no necesitamos buscar el texto visible porque usamos botones)
-        const formattedDate = preferredDate;
-
-        // Create WhatsApp message with all the information
-        let message = `Hola, soy ${fullname} y me interesa agendar una valoración de ortodoncia.\n\n`;
-        message += `*DATOS DE CONTACTO*\n`;
-        message += `- Nombre: ${fullname}\n`;
-        message += `- WhatsApp: ${whatsapp}\n\n`;
-        message += `*CITA SOLICITADA*\n`;
-        message += `- Fecha: ${formattedDate}\n`;
-        message += `- Hora: ${preferredTime}\n\n`;
-        message += `*ENTIENDO QUE:*\n`;
-        message += `- Se requiere un depósito de $400 para confirmar mi cita\n`;
-        message += `- Este monto será deducido del costo total del tratamiento\n\n`;
-        message += `*RESPUESTAS DEL CUESTIONARIO*\n`;
-
-        // Add quiz answers to the message
-        questions.forEach(question => {
-            if (answers[question.key]) {
-                message += `- ${question.question.replace(/\?/g, '')}? ${answers[question.key].value}\n`;
-            }
-        });
-
-        // Encode the message for URL
-        const encodedMessage = encodeURIComponent(message);
-
-        // Tracking: Confirmación de datos
-        if (typeof fbq !== 'undefined') {
-            const pasoNum = questions.length + 4;
-            const eventName = `Paso${pasoNum}_ConfirmacionDatos`;
-            console.log(`Tracking: ${eventName}`);
-            fbq('trackCustom', eventName, {
-                event_category: 'Form',
-                event_label: 'Confirmación de datos personales',
-                qualified: determineQualification()
-            });
-        }
-
-        // Mostrar el paso 3 (confirmación)
-        document.getElementById('form-step-2').style.display = 'none';
-        document.getElementById('form-step-3').style.display = 'block';
-
-        // Actualizar los datos de resumen
-        document.getElementById('summary-name').textContent = fullname;
-        document.getElementById('summary-whatsapp').textContent = whatsapp;
-        document.getElementById('summary-date').textContent = formattedDate;
-        document.getElementById('summary-time').textContent = preferredTime;
-
-        // Recopilar respuestas del cuestionario para mostrar en el resumen
-        const summaryAnswers = document.getElementById('summary-answers');
-        if (summaryAnswers) {
-            summaryAnswers.innerHTML = '';
-
-            // Mostrar las respuestas del cuestionario en el resumen
-            questions.forEach(question => {
-                if (answers[question.key]) {
-                    const answerItem = document.createElement('div');
-                    answerItem.className = 'summary-item';
-                    answerItem.innerHTML = `
-                        <span class="summary-label">${question.question}:</span>
-                        <span class="summary-value">${answers[question.key].value}</span>
-                    `;
-                    summaryAnswers.appendChild(answerItem);
-                }
-            });
-        }
-    });
-
-    // Manejar el clic en el botón de finalizar
-    document.getElementById('finish-button').addEventListener('click', () => {
-        console.log('Finish button clicked');
-
         // Tracking: Finalización del proceso
         if (typeof fbq !== 'undefined') {
-            const pasoNum = questions.length + 5;
+            const pasoNum = questions.length + 4; // Ahora es el paso 4 porque eliminamos el paso de confirmación
             const eventName = `Paso${pasoNum}_Finalizacion`;
             console.log(`Tracking: ${eventName}`);
             fbq('trackCustom', eventName, {
@@ -1438,11 +1366,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Obtener los datos para el mensaje de WhatsApp y para enviar al endpoint
-        const fullname = document.getElementById('fullname').value;
-        const whatsapp = document.getElementById('whatsapp').value;
-        const preferredDate = document.getElementById('preferred-date').value;
-        const preferredTime = document.getElementById('preferred-time').value;
+        // Ya tenemos los datos para el mensaje de WhatsApp y para enviar al endpoint
 
         // Recopilar respuestas del cuestionario para el landingUrl
         const questionnaire = {};
@@ -1494,8 +1418,8 @@ document.addEventListener('DOMContentLoaded', () => {
             message += `- Fecha: ${preferredDate}\n`;
             message += `- Hora: ${preferredTime}\n\n`;
             message += `*ENTIENDO QUE:*\n`;
-            message += `- Se requiere un depósito de $400 para confirmar mi cita\n`;
-            message += `- Este monto será deducido del costo total del tratamiento\n\n`;
+            message += `- Se requiere un pago anticipado de $23.000 para confirmar mi cita\n`;
+            message += `- Este pago es obligatorio para reservar mi consulta\n\n`;
             message += `*RESPUESTAS DEL CUESTIONARIO*\n`;
 
             // Add quiz answers to the message
