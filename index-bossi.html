@@ -184,10 +184,7 @@
         <div class="form-container" id="form-container">
             <h2>Agenda tu consulta con la Dra. Constanza Bossi</h2>
 
-            <div class="payment-reminder">
-                <p><strong>IMPORTANTE:</strong> Se requiere un pago anticipado de $23.000 para confirmar tu cita de evaluación.</p>
-                <p>Este pago es obligatorio para reservar tu consulta.</p>
-            </div>
+
 
             <div class="form-steps">
                 <!-- Paso 1: Seleccionar fecha y hora -->
@@ -196,6 +193,10 @@
                         <div class="date-time-selector">
                             <div class="selector-section">
                                 <h4>Selecciona una fecha</h4>
+                                <div id="loading-dates" class="loading-container" style="display: none;">
+                                    <div class="loading-spinner"></div>
+                                    <p>Cargando fechas disponibles...</p>
+                                </div>
                                 <div class="date-grid" id="date-grid">
                                     <!-- Las fechas se cargarán dinámicamente con JavaScript -->
                                 </div>
@@ -204,6 +205,10 @@
 
                             <div class="selector-section">
                                 <h4>Selecciona una hora</h4>
+                                <div id="loading-times" class="loading-container" style="display: none;">
+                                    <div class="loading-spinner"></div>
+                                    <p>Cargando horarios disponibles...</p>
+                                </div>
                                 <div class="time-grid" id="time-grid">
                                     <!-- Las horas se cargarán dinámicamente con JavaScript -->
                                 </div>
@@ -235,9 +240,8 @@
                             <div id="whatsapp-validation" class="validation-message"></div>
                         </div>
 
-                        <div class="payment-confirmation">
-                            <input type="checkbox" id="payment-agreement" name="payment-agreement" required>
-                            <label for="payment-agreement">Entiendo que se requiere un pago anticipado de $23.000 para confirmar mi cita</label>
+                        <div class="payment-reminder">
+                            <p>Recuerda que se requiere un pago anticipado de $23.000 para confirmar tu cita. Este pago es obligatorio para reservar tu consulta.</p>
                         </div>
 
                         <div class="confirmation-footer">

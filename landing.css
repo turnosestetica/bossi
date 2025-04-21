@@ -1304,7 +1304,39 @@ body {
     }
 }
 
-/* Animación de carga - Ya definida arriba */
+/* Animación de carga */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    background-color: rgba(245, 245, 245, 0.7);
+    border-radius: var(--border-radius);
+    margin: 1rem 0;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(var(--primary-color-rgb), 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+    color: var(--primary-color);
+    font-weight: 500;
+    margin: 0;
+}
 
 /* Mensaje de redirección */
 .redirect-message {
