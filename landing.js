@@ -1766,15 +1766,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Ya no necesitamos el manejador para el botón 'back-to-form-button' porque hemos eliminado el paso 3 (confirmación)
-    // Redirigir el clic en el botón de confirmación al botón de finalizar
-    document.getElementById('confirm-button').addEventListener('click', () => {
-        console.log('Confirm button clicked, redirecting to finish button');
-        // Simular un clic en el botón de finalizar
-        document.getElementById('finish-button').click();
-    });
+    // Redirigir el clic en el botón de confirmación al botón de finalizar (si existe)
+    const confirmButtonElement = document.getElementById('confirm-button');
+    if (confirmButtonElement) {
+        confirmButtonElement.addEventListener('click', () => {
+            console.log('Confirm button clicked, redirecting to finish button');
+            // Simular un clic en el botón de finalizar
+            const finishButton = document.getElementById('finish-button');
+            if (finishButton) {
+                finishButton.click();
+            }
+        });
+    }
 
     // Manejar el clic en el botón de finalizar
-    document.getElementById('finish-button').addEventListener('click', () => {
+    const finishButtonElement = document.getElementById('finish-button');
+    if (finishButtonElement) {
+        finishButtonElement.addEventListener('click', () => {
         console.log('Finish button clicked');
 
         // Tracking: Finalización del proceso
@@ -1939,4 +1947,5 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Hubo un error al enviar los datos. Por favor, inténtalo de nuevo.');
         });
     });
+    }
 });
