@@ -1570,11 +1570,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showConfirmation = function() {
         console.log('showConfirmation called');
 
-        // Validate the form
-        if (!document.getElementById('payment-agreement').checked) {
-            alert('Debes aceptar el requisito de depósito para continuar.');
-            return;
-        }
+        // Ya no es necesario validar el checkbox de pago anticipado porque se ha eliminado
+        // El usuario ya está informado sobre el requisito de depósito a través del texto informativo
 
         // Validate WhatsApp number format (basic validation)
         const whatsappInput = document.getElementById('whatsapp');
@@ -1732,11 +1729,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 formContainer.scrollTop = 0;
             }
 
-            // Enfocar el primer campo del formulario solo después de asegurar que la página está arriba
-            const fullnameInput = document.getElementById('fullname');
-            if (fullnameInput) {
-                console.log('Enfocando campo de nombre');
-                fullnameInput.focus();
+            // Enfocar el campo de WhatsApp solo después de asegurar que la página está arriba
+            const whatsappInput = document.getElementById('whatsapp');
+            if (whatsappInput) {
+                console.log('Enfocando campo de WhatsApp');
+                whatsappInput.focus();
             }
         };
 

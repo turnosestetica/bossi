@@ -1145,11 +1145,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showConfirmation = function() {
         console.log('showConfirmation called');
 
-        // Validate the form
-        if (!document.getElementById('payment-agreement').checked) {
-            alert('Debes aceptar el requisito de depósito para continuar.');
-            return;
-        }
+        // Ya no es necesario validar el checkbox de pago anticipado porque se ha eliminado
+        // El usuario ya está informado sobre el requisito de depósito a través del texto informativo
 
         // Validate WhatsApp number format (basic validation)
         const whatsappInput = document.getElementById('whatsapp');
@@ -1267,6 +1264,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mostrar el paso 2 (datos personales)
         document.getElementById('form-step-1').style.display = 'none';
         document.getElementById('form-step-2').style.display = 'block';
+
+        // Enfocar el campo de WhatsApp
+        setTimeout(() => {
+            const whatsappInput = document.getElementById('whatsapp');
+            if (whatsappInput) {
+                console.log('Enfocando campo de WhatsApp');
+                whatsappInput.focus();
+            }
+        }, 100);
     });
 
     // Manejar el clic en el botón de regresar al paso 1
@@ -1285,6 +1291,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mostrar el paso 2 (datos personales) y ocultar el paso 3 (confirmación)
         document.getElementById('form-step-3').style.display = 'none';
         document.getElementById('form-step-2').style.display = 'block';
+
+        // Enfocar el campo de WhatsApp
+        setTimeout(() => {
+            const whatsappInput = document.getElementById('whatsapp');
+            if (whatsappInput) {
+                console.log('Enfocando campo de WhatsApp');
+                whatsappInput.focus();
+            }
+        }, 100);
     });
     // Manejar el clic en el botón de confirmación
     document.getElementById('confirm-button').addEventListener('click', () => {
@@ -1316,11 +1331,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Validar que se haya aceptado el requisito de depósito
-        if (!document.getElementById('payment-agreement').checked) {
-            alert('Debes aceptar el requisito de depósito para continuar.');
-            return;
-        }
+        // Ya no es necesario validar el checkbox de pago anticipado porque se ha eliminado
+        // El usuario ya está informado sobre el requisito de depósito a través del texto informativo
 
         // Obtener la fecha seleccionada (ya no necesitamos buscar el texto visible porque usamos botones)
         const formattedDate = preferredDate;
