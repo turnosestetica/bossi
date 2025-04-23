@@ -1503,11 +1503,29 @@ document.addEventListener('DOMContentLoaded', () => {
         whatsappValidation.textContent = 'Verificando número...';
         whatsappValidation.className = 'validation-message';
 
+        // Recopilar respuestas del cuestionario en formato legible
+        let respuestasFormateadas = '';
+        let respuestasDetalladas = {};
+
+        if (window.questions && window.questions.length > 0) {
+            window.questions.forEach(question => {
+                if (window.answers[question.key]) {
+                    // Añadir al texto formateado para el webhook
+                    respuestasFormateadas += `${question.question}: ${window.answers[question.key].value}\n`;
+                    // Guardar respuesta detallada
+                    respuestasDetalladas[question.key] = window.answers[question.key].value;
+                }
+            });
+        }
+
         // Llamada al webhook para validar el número de WhatsApp
         const validationData = {
             whatsapp_check: digitsOnly,
             action: 'validate_whatsapp',
-            origen: "Landing Dra. Constanza Bossi"
+            origen: "Landing Dra. Constanza Bossi",
+            landingUrl: window.location.href,
+            respuestas: respuestasFormateadas,
+            respuestas_detalladas: respuestasDetalladas
         };
 
         fetch(CONFIG && CONFIG.webhooks ? CONFIG.webhooks.whatsappValidation : 'https://sswebhookss.odontolab.co/webhook/02eb0643-1b9d-4866-87a7-f892d6a945ea', {
