@@ -570,7 +570,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startQuizButton = document.getElementById('start-quiz');
     const restartQuizButton = document.getElementById('restart-quiz');
     const appointmentButton = document.getElementById('appointment-button');
-    const appointmentForm = document.getElementById('appointment-form');
+    // Eliminamos la referencia no utilizada a appointmentForm
     const qualificationResult = document.getElementById('qualification-result');
 
     // Quiz questions - Ya definidas al inicio del archivo
@@ -820,30 +820,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             quizContainer.style.display = 'none';
-            resultsContainer.style.display = 'flex';
 
-            // Fade in results container
-            setTimeout(() => {
-                resultsContainer.style.opacity = '1';
+            // Llamar a la función showResults para mostrar los resultados y precargar los datos de disponibilidad
+            showResultsAndLoadData();
 
-                // Determine qualification
-                const qualified = determineQualification();
+            // Determine qualification
+            const qualified = determineQualification();
 
-                if (qualified) {
-                    // Usar el mensaje de la configuración si está disponible
-                    if (CONFIG && CONFIG.landingPage && CONFIG.landingPage.priceNote) {
-                        qualificationResult.textContent = CONFIG.landingPage.priceNote;
-                    } else {
-                        // Fallback por si no hay configuración
-                        qualificationResult.textContent = 'Podrías ser candidato para este tratamiento. Para comprobarlo, solicita una cita de valoración.';
-                    }
-                    qualificationResult.style.color = 'var(--primary-color)';
-                    qualificationResult.classList.add('qualified');
+            if (qualified) {
+                // Usar el mensaje de la configuración si está disponible
+                if (CONFIG && CONFIG.landingPage && CONFIG.landingPage.priceNote) {
+                    qualificationResult.textContent = CONFIG.landingPage.priceNote;
                 } else {
-                    qualificationResult.textContent = 'Lamentablemente, no podemos avanzar con tu cita si no puedes visitarnos en nuestra ubicación';
-                    qualificationResult.style.color = '#e67e22';
+                    // Fallback por si no hay configuración
+                    qualificationResult.textContent = 'Podrías ser candidato para este tratamiento. Para comprobarlo, solicita una cita de valoración.';
                 }
-            }, 50);
+                qualificationResult.style.color = 'var(--primary-color)';
+                qualificationResult.classList.add('qualified');
+            } else {
+                qualificationResult.textContent = 'Lamentablemente, no podemos avanzar con tu cita si no puedes visitarnos en nuestra ubicación';
+                qualificationResult.style.color = '#e67e22';
+            }
         }, 300);
     }
 
@@ -995,8 +992,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (loadingDates) loadingDates.style.display = 'flex';
             if (loadingTimes) loadingTimes.style.display = 'flex';
 
-            // Cargar las fechas disponibles desde el webhook
-            loadAvailabilityData().then(success => {
+            // Cargar las fechas disponibles desde el webhook solo si no se han cargado previamente
+            // Pasar true para mostrar alertas cuando el usuario hace clic en "Ver disponibilidad"
+            const loadDates = availabilityDataLoaded ? Promise.resolve(true) : loadAvailabilityData(true);
+
+            loadDates.then(success => {
                 // Restaurar el botón a su estado original
                 appointmentButton.disabled = false;
                 appointmentButton.innerHTML = 'Ver disponibilidad';
@@ -1013,19 +1013,24 @@ document.addEventListener('DOMContentLoaded', () => {
                             resultsContainer.style.opacity = '1';
                         }, 50);
                     }, 300);
+                } else if (availabilityDataLoaded) {
+                    // Si los datos ya estaban cargados, actualizar la interfaz
+                    console.log('Usando datos de disponibilidad precargados');
+                    loadAvailableDates();
                 }
             });
         }, 300);
     });
 
-    // Variable global para almacenar los datos de disponibilidad
+    // Variables globales para almacenar los datos de disponibilidad y rastrear si ya se han cargado
     let availabilityData = null;
+    let availabilityDataLoaded = false;
 
     // URL del webhook para obtener fechas y horarios disponibles
     const availabilityWebhookUrl = CONFIG && CONFIG.webhooks ? CONFIG.webhooks.availability : 'https://sswebhookss.odontolab.co/webhook/f424d581-8261-4141-bcd6-4b021cf61d39';
 
     // Cargar fechas y horarios disponibles desde el webhook
-    async function loadAvailabilityData() {
+    async function loadAvailabilityData(showAlerts = false) {
         console.log('%c=== INICIO CARGA DE DISPONIBILIDAD ===', 'background: #3498db; color: white; padding: 5px; border-radius: 5px;');
         console.log('Cargando datos de disponibilidad desde el webhook...');
         try {
@@ -1107,7 +1112,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         } catch (error) {
             console.error('Error al cargar datos de disponibilidad:', error);
-            alert('Hubo un problema al cargar las fechas disponibles. Por favor, recarga la página.');
+            // Solo mostrar alerta si se solicita explícitamente (no en carga en segundo plano)
+            if (showAlerts) {
+                alert('Hubo un problema al cargar las fechas disponibles. Por favor, intenta nuevamente.');
+            }
             return false;
         }
     }
@@ -1414,7 +1422,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Ya no cargamos las fechas al iniciar, sino cuando el usuario hace clic en "Ver disponibilidad"
+    // Iniciar la carga de datos de disponibilidad cuando se muestra el paso de precios de referencia
+    function showResultsAndLoadData() {
+        // Mostrar el contenedor de resultados primero
+        resultsContainer.style.display = 'flex';
+        setTimeout(() => {
+            resultsContainer.style.opacity = '1';
+
+            // Iniciar la carga de datos de disponibilidad en segundo plano DESPUÉS de mostrar la página
+            // Usamos un timeout para asegurar que la UI se ha renderizado completamente
+            setTimeout(() => {
+                if (!availabilityDataLoaded) {
+                    console.log('Precargando datos de disponibilidad en segundo plano...');
+                    // Pasar false para no mostrar alertas en la carga en segundo plano
+                    loadAvailabilityData(false).then(success => {
+                        if (success) {
+                            console.log('Datos de disponibilidad precargados correctamente');
+                            availabilityDataLoaded = true;
+                        } else {
+                            console.error('Error al precargar datos de disponibilidad');
+                        }
+                    });
+                }
+            }, 500); // Esperar 500ms para asegurar que la UI se ha renderizado
+        }, 50);
+    }
+
+    // Ya no cargamos las fechas al iniciar, sino cuando el usuario hace clic en "Ver disponibilidad" o cuando se muestra el paso de precios
 
     // Obtener referencia al campo de WhatsApp
     const whatsappField = document.getElementById('whatsapp');
@@ -1434,11 +1468,11 @@ document.addEventListener('DOMContentLoaded', () => {
         whatsappValidation.textContent = '';
         whatsappValidation.className = 'validation-message';
 
-        // Deshabilitar el botón de confirmación mientras se está escribiendo
-        const confirmButton = document.getElementById('confirm-button');
+        // Deshabilitar el botón de finalizar mientras se está escribiendo
+        const finishButton = document.getElementById('finish-button');
         const buttonStatusMessage = document.getElementById('button-status-message');
-        if (confirmButton) {
-            confirmButton.disabled = true;
+        if (finishButton) {
+            finishButton.disabled = true;
         }
         if (buttonStatusMessage) {
             buttonStatusMessage.textContent = 'Verifica tu número de WhatsApp para continuar';
@@ -1494,11 +1528,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     whatsappValidation.className = 'validation-message success';
 
                     // Actualizar el estado del botón y el mensaje
-                    const confirmButton = document.getElementById('confirm-button');
+                    const finishButton = document.getElementById('finish-button');
                     const buttonStatusMessage = document.getElementById('button-status-message');
 
-                    if (confirmButton) {
-                        confirmButton.disabled = false; // Habilitar el botón si el WhatsApp es válido
+                    if (finishButton) {
+                        finishButton.disabled = false; // Habilitar el botón si el WhatsApp es válido
                     }
 
                     if (buttonStatusMessage) {
@@ -1511,11 +1545,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     whatsappValidation.className = 'validation-message error';
 
                     // Deshabilitar el botón y actualizar el mensaje
-                    const confirmButton = document.getElementById('confirm-button');
+                    const finishButton = document.getElementById('finish-button');
                     const buttonStatusMessage = document.getElementById('button-status-message');
 
-                    if (confirmButton) {
-                        confirmButton.disabled = true;
+                    if (finishButton) {
+                        finishButton.disabled = true;
                     }
 
                     if (buttonStatusMessage) {
@@ -1529,11 +1563,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 whatsappValidation.className = 'validation-message error';
 
                 // Deshabilitar el botón y actualizar el mensaje
-                const confirmButton = document.getElementById('confirm-button');
+                const finishButton = document.getElementById('finish-button');
                 const buttonStatusMessage = document.getElementById('button-status-message');
 
-                if (confirmButton) {
-                    confirmButton.disabled = true;
+                if (finishButton) {
+                    finishButton.disabled = true;
                 }
 
                 if (buttonStatusMessage) {
@@ -1548,11 +1582,11 @@ document.addEventListener('DOMContentLoaded', () => {
             whatsappValidation.className = 'validation-message error';
 
             // Deshabilitar el botón y actualizar el mensaje
-            const confirmButton = document.getElementById('confirm-button');
+            const finishButton = document.getElementById('finish-button');
             const buttonStatusMessage = document.getElementById('button-status-message');
 
-            if (confirmButton) {
-                confirmButton.disabled = true;
+            if (finishButton) {
+                finishButton.disabled = true;
             }
 
             if (buttonStatusMessage) {
@@ -1779,9 +1813,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Manejar el clic en el botón de finalizar
+    // Manejar el botón de finalizar
     const finishButtonElement = document.getElementById('finish-button');
     if (finishButtonElement) {
+        // Deshabilitar el botón de finalizar por defecto hasta que el WhatsApp sea validado
+        finishButtonElement.disabled = true;
+
         finishButtonElement.addEventListener('click', () => {
         console.log('Finish button clicked');
 

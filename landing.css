@@ -529,8 +529,47 @@ body {
 .cta-container {
     display: flex;
     justify-content: center;
-    margin-top: 1rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
 }
+
+/* Estilo para el botón cuando está en el contenedor fijo */
+.cta-container .appointment-button {
+    width: 80%;
+    max-width: 300px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    white-space: nowrap;
+}
+
+/* Estilos específicos para dispositivos móviles */
+@media (max-width: 768px) {
+    .cta-container {
+        padding: 1rem;
+    }
+
+    .cta-container .appointment-button {
+        width: 90%;
+        max-width: 300px;
+        font-size: 1.3rem;
+    }
+}
+
+/* Agregar espacio en la parte inferior del contenedor de resultados para que el contenido no quede oculto detrás del botón fijo */
+.results-container {
+    padding-bottom: 80px;
+}
+
+
 
 .appointment-button {
     background-color: var(--primary-color);
