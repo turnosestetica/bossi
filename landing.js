@@ -1862,8 +1862,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Obtener los datos para el mensaje de WhatsApp y para enviar al endpoint
         const fullname = document.getElementById('fullname').value;
         const whatsapp = document.getElementById('whatsapp').value;
-        const preferredDate = document.getElementById('preferred-date').value;
-        const preferredTime = document.getElementById('preferred-time').value;
+        let preferredDate = document.getElementById('preferred-date').value;
+        let preferredTime = document.getElementById('preferred-time').value;
         const mainDoubt = document.getElementById('main_doubt').value || '';
 
         // Recopilar respuestas del cuestionario para el landingUrl
@@ -1913,10 +1913,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Validar que todos los campos requeridos estén completos
-        if (!fullname || !whatsapp || !preferredDate || !preferredTime) {
-            alert('Por favor completa todos los campos del formulario.');
+        // Validar que los campos de nombre y WhatsApp estén completos
+        if (!fullname || !whatsapp) {
+            alert('Por favor completa tu nombre y número de WhatsApp.');
             return;
+        }
+
+        // Asignar valores predeterminados a fecha y hora si están vacíos
+        const defaultDate = "Próxima disponible";
+        const defaultTime = "A coordinar";
+
+        if (!preferredDate) {
+            console.log('Fecha no seleccionada, usando valor predeterminado');
+            preferredDate = defaultDate;
+        }
+
+        if (!preferredTime) {
+            console.log('Hora no seleccionada, usando valor predeterminado');
+            preferredTime = defaultTime;
         }
 
         // Validar que el número de WhatsApp tenga al menos 10 dígitos
