@@ -1866,6 +1866,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const preferredTime = document.getElementById('preferred-time').value;
         const mainDoubt = document.getElementById('main_doubt').value || '';
 
+        // Validar que todos los campos requeridos estén completos
+        if (!fullname || !whatsapp || !preferredDate || !preferredTime) {
+            alert('Por favor completa todos los campos del formulario.');
+            return;
+        }
+
+        // Validar que el número de WhatsApp tenga al menos 10 dígitos
+        const whatsappDigits = whatsapp.replace(/\D/g, '');
+        if (whatsappDigits.length < 10 || whatsappDigits.length > 15) {
+            alert('Por favor ingresa un número de WhatsApp válido (al menos 10 dígitos).');
+            document.getElementById('whatsapp').focus();
+            return;
+        }
+
+        // Crear y mostrar el overlay de carga
+        const overlay = document.createElement('div');
+        overlay.className = 'mercadopago-overlay';
+        overlay.innerHTML = `
+            <div class="mercadopago-spinner"></div>
+            <p>Generando link de pago personalizado...</p>
+            <p>Por favor espera, serás redirigido a Mercado Pago en unos segundos.</p>
+        `;
+        document.body.appendChild(overlay);
+
+        // Deshabilitar el botón para evitar múltiples envíos
+        const finishButton = document.getElementById('finish-button');
+        finishButton.disabled = true;
+        finishButton.innerHTML = '<span class="loading-spinner"></span> Procesando...';
+
         // Recopilar respuestas del cuestionario para el landingUrl
         const questionnaire = {};
         for (const key in answers) {
@@ -1887,138 +1916,123 @@ document.addEventListener('DOMContentLoaded', () => {
             respuestasTexto += `¿Cuál es tu principal duda sobre el procedimiento?: ${mainDoubt}\n`;
         }
 
-        // Preparar datos completos para el webhook
-        const formData = {
-            fullname: fullname,
-            whatsapp: whatsapp,
-            tratamiento_interes: answers.procedure ? answers.procedure.value : 'Cirugía plástica',
-            fecha_cita: `${preferredDate} ${preferredTime}`,
-            fecha: preferredDate,
-            hora: preferredTime,
-            landingUrl: window.location.href,
-            respuestas: respuestasTexto,
-            respuestas_detalladas: {},
-            videollamada_previa: answers.videocall ? (answers.videocall.value.includes('Sí') ? 'Sí' : 'No') : 'No',
-            peso: answers.weight ? answers.weight.value : '',
-            altura: answers.height ? answers.height.value : '',
-            duda_principal: mainDoubt,
-            estado: "NUEVO",
-            origen: "Landing Dra. Constanza Bossi"
-        };
-
-        // Agregar todas las respuestas individuales
-        questions.forEach(question => {
-            if (answers[question.key]) {
-                formData.respuestas_detalladas[question.key] = answers[question.key].value;
-            }
-        });
-
-        // Mostrar indicador de carga
-        const finishButton = document.getElementById('finish-button');
-        finishButton.disabled = true;
-        finishButton.innerHTML = '<span class="loading-spinner"></span> Enviando...';
-
-        // Enviar datos al endpoint usando jQuery AJAX
-        const targetUrl = CONFIG && CONFIG.webhooks ? CONFIG.webhooks.formSubmission : "https://sswebhookss.odontolab.co/webhook/0dc8f34f-0992-419f-a841-b3782f2556a5";
-
-        jQuery.ajax({
-            url: targetUrl,
-            data: JSON.stringify(formData),
-            type: "POST",
-            contentType: "application/json",
-            dataType: "json"
-        })
-        .done(function(response) {
-            console.log("Respuesta del servidor:", response);
-
-            // Crear mensaje de WhatsApp usando la plantilla de la configuración
-            let message = '';
-
-            if (CONFIG && CONFIG.landingPage && CONFIG.landingPage.whatsappMessage) {
-                const msgTemplate = CONFIG.landingPage.whatsappMessage;
-                const depositAmount = CONFIG && CONFIG.clinic ? CONFIG.clinic.depositAmount : 400;
-
-                // Greeting
-                message = msgTemplate.greeting.replace('{nombre}', fullname) + '\n\n';
-
-                // Contact info
-                message += msgTemplate.contactInfo
-                    .replace('{nombre}', fullname)
-                    .replace('{whatsapp}', whatsapp) + '\n\n';
-
-                // Appointment info
-                message += msgTemplate.appointmentInfo
-                    .replace('{fecha}', preferredDate)
-                    .replace('{hora}', preferredTime) + '\n\n';
-
-                // Deposit info
-                message += msgTemplate.depositInfo
-                    .replace('{deposito}', depositAmount) + '\n\n';
-
-                // Questionnaire info header
-                message += msgTemplate.questionnaireInfo.split('\n')[0] + '\n';
-            } else {
-                // Fallback en caso de que no exista la configuración
-                message = `Hola, soy ${fullname} y me interesa agendar una valoración.\n\n`;
-                message += `*DATOS DE CONTACTO*\n`;
-                message += `- Nombre: ${fullname}\n`;
-                message += `- WhatsApp: ${whatsapp}\n\n`;
-                message += `*CITA SOLICITADA*\n`;
-                message += `- Fecha: ${preferredDate}\n`;
-                message += `- Hora: ${preferredTime}\n\n`;
-                message += `*ENTIENDO QUE:*\n`;
-                message += `- Se requiere un depósito para confirmar mi cita\n`;
-                message += `- Este monto será deducido del costo total del tratamiento\n\n`;
-                message += `*RESPUESTAS DEL CUESTIONARIO*\n`;
-            }
-
-            // Add quiz answers to the message
-            questions.forEach(question => {
-                if (answers[question.key]) {
-                    message += `- ${question.question.replace(/\?/g, '')}? ${answers[question.key].value}\n`;
+        // Primero, obtener el link de pago de Mercado Pago
+        fetch('https://sswebhookss.odontolab.co/webhook/c0cb515e-caf1-424f-b67c-84c022d90eae', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify([
+                {
+                    "cliente": "bossi",
+                    "paciente": fullname,
+                    "telefono": whatsapp.replace(/\D/g, ''),
+                    "whatsapp_cliente": "5493812093646"
                 }
-            });
+            ])
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Respuesta del servidor de Mercado Pago:", data);
 
-            // Agregar la duda principal al mensaje si existe
-            if (mainDoubt && mainDoubt.trim() !== '') {
-                message += `- ¿Cuál es tu principal duda sobre el procedimiento? ${mainDoubt}\n`;
-            }
+            // Verificar si la respuesta contiene el link de Mercado Pago
+            if (data && data.length > 0 && data[0].mercadopago_linkpersonalizado_creado) {
+                const mercadoPagoLink = data[0].mercadopago_linkpersonalizado_creado;
 
-            // Encode the message for URL
-            const encodedMessage = encodeURIComponent(message);
-
-            // Cambiar el botón a un botón de WhatsApp
-            finishButton.disabled = false;
-            finishButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.72.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 1.856.001 3.598.723 4.907 2.034 1.31 1.311 2.031 3.054 2.03 4.908-.001 3.825-3.113 6.938-6.937 6.938z"/></svg> Contactar por WhatsApp';
-
-            // Mostrar mensaje de redirección
-            const confirmationMessage = document.createElement('div');
-            confirmationMessage.className = 'redirect-message';
-            confirmationMessage.innerHTML = '<p>Datos guardados correctamente. Redirigiendo a WhatsApp en 3 segundos...</p>';
-            document.querySelector('.confirmation-footer').appendChild(confirmationMessage);
-
-            // Disparar evento CitaFiltro explícitamente
-            if (typeof fbq !== 'undefined') {
-                console.log('Disparando evento CitaFiltro en Facebook Pixel ANTES de redireccionar');
-                fbq('trackCustom', 'CitaFiltro', {
+                // Preparar datos completos para el webhook
+                const formData = {
                     fullname: fullname,
                     whatsapp: whatsapp,
+                    tratamiento_interes: answers.treatment_type ? answers.treatment_type.value : 'Cirugía plástica',
                     fecha_cita: `${preferredDate} ${preferredTime}`,
-                    tratamiento: CONFIG && CONFIG.landingPage && CONFIG.landingPage.whatsappMessage ? CONFIG.landingPage.whatsappMessage.treatmentType : 'general'
+                    fecha: preferredDate,
+                    hora: preferredTime,
+                    landingUrl: window.location.href,
+                    respuestas: respuestasTexto,
+                    respuestas_detalladas: {},
+                    videollamada_previa: answers.videocall ? (answers.videocall.value.includes('Sí') ? 'Sí' : 'No') : 'No',
+                    peso: answers.weight ? answers.weight.value : '',
+                    altura: answers.height ? answers.height.value : '',
+                    duda_principal: mainDoubt,
+                    estado: "NUEVO",
+                    origen: "Landing Dra. Constanza Bossi",
+                    mercadopago_link: mercadoPagoLink // Agregar el link de Mercado Pago
+                };
+
+                // Agregar todas las respuestas individuales
+                questions.forEach(question => {
+                    if (answers[question.key]) {
+                        formData.respuestas_detalladas[question.key] = answers[question.key].value;
+                    }
                 });
+
+                // Enviar datos al endpoint usando jQuery AJAX
+                jQuery.ajax({
+                    url: CONFIG && CONFIG.webhooks ? CONFIG.webhooks.formSubmission : "https://sswebhookss.odontolab.co/webhook/0dc8f34f-0992-419f-a841-b3782f2556a5",
+                    data: JSON.stringify(formData),
+                    type: "POST",
+                    contentType: "application/json",
+                    dataType: "json"
+                })
+                .done(function(response) {
+                    console.log("Respuesta del servidor de guardado de datos:", response);
+
+                    // Disparar evento CitaFiltro explícitamente
+                    if (typeof fbq !== 'undefined') {
+                        console.log('Disparando evento CitaFiltro en Facebook Pixel ANTES de redireccionar');
+                        fbq('trackCustom', 'CitaFiltro', {
+                            fullname: fullname,
+                            whatsapp: whatsapp,
+                            fecha_cita: `${preferredDate} ${preferredTime}`,
+                            tratamiento: 'Cirugía plástica'
+                        });
+                    }
+
+                    // Redirigir al usuario al link de Mercado Pago
+                    window.location.href = mercadoPagoLink;
+                })
+                .fail(function(error) {
+                    console.error('Error al enviar los datos:', error);
+
+                    // Remover el overlay
+                    if (overlay && overlay.parentNode) {
+                        overlay.parentNode.removeChild(overlay);
+                    }
+
+                    // Restaurar el botón
+                    finishButton.disabled = false;
+                    finishButton.innerHTML = 'Finalizar →';
+
+                    alert('Hubo un error al guardar los datos. Por favor, inténtalo de nuevo.');
+                });
+            } else {
+                console.error('No se recibió un link de Mercado Pago válido:', data);
+
+                // Remover el overlay
+                if (overlay && overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
+
+                // Restaurar el botón
+                finishButton.disabled = false;
+                finishButton.innerHTML = 'Finalizar →';
+
+                alert('Hubo un error al generar el link de pago. Por favor, inténtalo de nuevo.');
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener el link de Mercado Pago:', error);
+
+            // Remover el overlay
+            if (overlay && overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
             }
 
-            // Esperar 3 segundos y luego abrir WhatsApp en la misma pestaña
-            setTimeout(() => {
-                // Abrir WhatsApp con el mensaje en la misma pestaña
-                window.location.href = `https://wa.me/+${CONFIG && CONFIG.clinic ? CONFIG.clinic.whatsapp : '524441234567'}?text=${encodedMessage}`;
-            }, 3000);
-        })
-        .fail(function(error) {
-            console.error('Error al enviar los datos:', error);
+            // Restaurar el botón
             finishButton.disabled = false;
             finishButton.innerHTML = 'Finalizar →';
-            alert('Hubo un error al enviar los datos. Por favor, inténtalo de nuevo.');
+
+            alert('Hubo un error al conectar con el servidor de pagos. Por favor, inténtalo de nuevo.');
         });
     });
     }
