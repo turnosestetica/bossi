@@ -822,7 +822,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             quizContainer.style.display = 'none';
 
-            // Llamar a la función showResults para mostrar los resultados y precargar los datos de disponibilidad
+            // Llamar a la función showResultsAndLoadData para mostrar los resultados y precargar los datos de disponibilidad
             showResultsAndLoadData();
 
             // Determine qualification
@@ -843,6 +843,68 @@ document.addEventListener('DOMContentLoaded', () => {
                 qualificationResult.style.color = '#e67e22';
             }
         }, 300);
+    }
+
+    // Mostrar resultados y precargar datos de disponibilidad
+    function showResultsAndLoadData() {
+        console.log('%c=== MOSTRANDO RESULTADOS Y PRECARGANDO DATOS ===', 'background: #2ecc71; color: white; padding: 5px; border-radius: 5px;');
+
+        // Mostrar el contenedor de resultados
+        resultsContainer.style.display = 'flex';
+        resultsContainer.style.opacity = '1';
+
+        // Precargar los datos de disponibilidad en segundo plano
+        console.log('Precargando datos de disponibilidad en segundo plano...');
+
+        // Mostrar un indicador de carga sutil (opcional)
+        const appointmentBtn = document.getElementById('appointment-button');
+        if (appointmentBtn) {
+            const originalText = appointmentBtn.textContent || 'Ver disponibilidad';
+            appointmentBtn.innerHTML = `${originalText} <span class="preloading-indicator" style="font-size: 8px; margin-left: 5px;">⟳</span>`;
+
+            // Agregar animación de rotación al indicador
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                .preloading-indicator {
+                    display: inline-block;
+                    animation: spin 1s linear infinite;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Cargar los datos de disponibilidad sin mostrar alertas (false)
+        loadAvailabilityData(false)
+            .then(success => {
+                console.log('Precarga de datos de disponibilidad completada:', success ? 'exitosa' : 'fallida');
+
+                // Actualizar el estado de carga
+                availabilityDataLoaded = success;
+
+                // Quitar el indicador de carga
+                if (appointmentBtn) {
+                    const preloadingIndicator = appointmentBtn.querySelector('.preloading-indicator');
+                    if (preloadingIndicator) {
+                        preloadingIndicator.remove();
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error en la precarga de datos de disponibilidad:', error);
+                // No mostrar alerta al usuario ya que es una carga en segundo plano
+
+                // Quitar el indicador de carga
+                if (appointmentBtn) {
+                    const preloadingIndicator = appointmentBtn.querySelector('.preloading-indicator');
+                    if (preloadingIndicator) {
+                        preloadingIndicator.remove();
+                    }
+                }
+            });
     }
 
     // Determine if user qualifies
