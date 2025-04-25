@@ -932,13 +932,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Reset answers and current question
         Object.keys(answers).forEach(key => delete answers[key]);
+
+        // Volver a la primera pregunta (selección de procedimiento)
+        document.querySelectorAll('.question').forEach((question, index) => {
+            if (index === 0) {
+                question.classList.add('active');
+            } else {
+                question.classList.remove('active');
+            }
+        });
+
         currentQuestionIndex = 0;
 
-        // Clear question container
-        questionContainer.innerHTML = '';
-
-        // Reiniciar el cuestionario directamente
-        initQuiz();
+        // Actualizar botones y barra de progreso
         updateButtons();
         updateProgressBar();
     });
@@ -1857,6 +1863,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const whatsapp = document.getElementById('whatsapp').value;
         const preferredDate = document.getElementById('preferred-date').value;
         const preferredTime = document.getElementById('preferred-time').value;
+        const mainDoubt = document.getElementById('main_doubt').value || '';
 
         // Recopilar respuestas del cuestionario para el landingUrl
         const questionnaire = {};
@@ -1874,6 +1881,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Agregar la duda principal a las respuestas si existe
+        if (mainDoubt && mainDoubt.trim() !== '') {
+            respuestasTexto += `¿Cuál es tu principal duda sobre el procedimiento?: ${mainDoubt}\n`;
+        }
+
         // Preparar datos completos para el webhook
         const formData = {
             fullname: fullname,
@@ -1888,6 +1900,7 @@ document.addEventListener('DOMContentLoaded', () => {
             videollamada_previa: answers.videocall ? (answers.videocall.value.includes('Sí') ? 'Sí' : 'No') : 'No',
             peso: answers.weight ? answers.weight.value : '',
             altura: answers.height ? answers.height.value : '',
+            duda_principal: mainDoubt,
             estado: "NUEVO",
             origen: "Landing Dra. Constanza Bossi"
         };
@@ -1964,6 +1977,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     message += `- ${question.question.replace(/\?/g, '')}? ${answers[question.key].value}\n`;
                 }
             });
+
+            // Agregar la duda principal al mensaje si existe
+            if (mainDoubt && mainDoubt.trim() !== '') {
+                message += `- ¿Cuál es tu principal duda sobre el procedimiento? ${mainDoubt}\n`;
+            }
 
             // Encode the message for URL
             const encodedMessage = encodeURIComponent(message);

@@ -110,6 +110,7 @@ window.submitForm = function() {
     const whatsapp = document.getElementById('whatsapp').value;
     const preferredDate = document.getElementById('preferred-date').value;
     const preferredTime = document.getElementById('preferred-time').value;
+    const mainDoubt = document.getElementById('main_doubt').value || '';
 
     // Obtener el texto visible de la fecha seleccionada
     const dateOption = document.querySelector(`#preferred-date option[value="${preferredDate}"]`);
@@ -126,6 +127,13 @@ window.submitForm = function() {
     message += `*ENTIENDO QUE:*\n`;
     message += `- Se requiere un depósito de $400 para confirmar mi cita\n`;
     message += `- Este monto será deducido del costo total del tratamiento\n\n`;
+
+    // Agregar la duda principal si existe
+    if (mainDoubt) {
+        message += `*MI PRINCIPAL DUDA:*\n`;
+        message += `${mainDoubt}\n\n`;
+    }
+
     message += `*RESPUESTAS DEL CUESTIONARIO*\n`;
 
     // Agregar respuestas del cuestionario al mensaje
@@ -183,6 +191,7 @@ window.submitForm = function() {
         tratamiento_interes: 'AllOnFour',
         fecha_cita: `${formattedDate} ${preferredTime}`,
         respuestas: respuestasFormateadas,  // Campo oculto con todas las respuestas
+        duda_principal: mainDoubt,  // Agregar la duda principal
         landingUrl: window.location.href,
         estado: "NUEVO"
     };
