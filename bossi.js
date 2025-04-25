@@ -311,6 +311,20 @@ window.submitForm = function() {
 // Esta función ha sido reemplazada por la nueva implementación que usa pasos
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Mostrar el landing-content y ocultar el quiz-container al inicio
+    const landingContent = document.getElementById('landing-content');
+    const quizContainer = document.getElementById('quiz-container');
+
+    if (landingContent) {
+        landingContent.style.display = 'flex';
+        landingContent.style.opacity = '1';
+    }
+
+    if (quizContainer) {
+        quizContainer.style.display = 'none';
+        quizContainer.style.opacity = '0';
+    }
+
     // Generar dinámicamente el HTML de los precios si hay tratamientos en la configuración
     if (CONFIG && CONFIG.treatments && CONFIG.treatments.length > 0) {
         const priceList = document.querySelector('.price-list');
@@ -793,18 +807,23 @@ document.addEventListener('DOMContentLoaded', () => {
             // Fade in form container
             setTimeout(() => {
                 formContainer.style.opacity = '1';
+
+                // Cargar fechas disponibles cuando se muestra el formulario
+                console.log('Cargando fechas disponibles al mostrar el formulario');
+                loadAvailabilityData();
             }, 50);
         }, 300);
     });
 
     // Variable global para almacenar los datos de disponibilidad
-    let availabilityData = null;
+    window.availabilityData = null;
 
     // URL del webhook para obtener fechas y horarios disponibles
     const availabilityWebhookUrl = CONFIG && CONFIG.webhooks ? CONFIG.webhooks.availability : 'https://sswebhookss.odontolab.co/webhook/f424d581-8261-4141-bcd6-4b021cf61d39';
 
     // Cargar fechas y horarios disponibles desde el webhook
-    async function loadAvailabilityData() {
+    // Hacemos la función global para poder llamarla desde el HTML
+    window.loadAvailabilityData = async function() {
         console.log('%c=== INICIO CARGA DE DISPONIBILIDAD ===', 'background: #3498db; color: white; padding: 5px; border-radius: 5px;');
         console.log('Cargando datos de disponibilidad desde el webhook...');
 
@@ -835,21 +854,21 @@ document.addEventListener('DOMContentLoaded', () => {
             // La respuesta es un array con un objeto dentro
             if (Array.isArray(responseData) && responseData.length > 0) {
                 console.log('La respuesta es un array. Extrayendo primer elemento...');
-                availabilityData = responseData[0];
+                window.availabilityData = responseData[0];
             } else {
                 console.log('La respuesta no es un array o está vacía. Usando directamente...');
-                availabilityData = responseData;
+                window.availabilityData = responseData;
             }
 
             // Verificar si availabilityData es un objeto y tiene propiedades
-            if (!availabilityData || typeof availabilityData !== 'object' || Object.keys(availabilityData).length === 0) {
+            if (!window.availabilityData || typeof window.availabilityData !== 'object' || Object.keys(window.availabilityData).length === 0) {
                 throw new Error('No se recibieron datos de disponibilidad válidos');
             }
 
             console.log('%cDatos de disponibilidad procesados:', 'color: #2ecc71; font-weight: bold;');
-            console.log(availabilityData);
-            console.log('Tipo de datos procesados:', typeof availabilityData);
-            console.log('Claves disponibles:', Object.keys(availabilityData));
+            console.log(window.availabilityData);
+            console.log('Tipo de datos procesados:', typeof window.availabilityData);
+            console.log('Claves disponibles:', Object.keys(window.availabilityData));
 
             // Cargar las fechas disponibles en el selector
             loadAvailableDates();
@@ -894,84 +913,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Cargar fechas disponibles en el selector
-    function loadAvailableDates() {
+    // Hacemos la función global para poder llamarla desde el HTML
+    window.loadAvailableDates = function() {
         console.log('%c=== CARGANDO FECHAS DISPONIBLES ===', 'background: #e74c3c; color: white; padding: 5px; border-radius: 5px;');
         const dateInput = document.getElementById('preferred-date');
         const dateGrid = document.getElementById('date-grid');
         console.log('Input de fechas encontrado:', dateInput ? 'Sí' : 'No');
         console.log('Grid de fechas encontrado:', dateGrid ? 'Sí' : 'No');
 
+        // Verificar que los elementos existan
+        if (!dateGrid || !dateInput) {
+            console.error('No se encontraron los elementos necesarios para cargar fechas');
+            return;
+        }
+
         // Limpiar el grid de fechas
         console.log('Limpiando grid de fechas...');
         dateGrid.innerHTML = '';
 
-        if (!availabilityData) {
+        if (!window.availabilityData) {
             console.error('No hay datos de disponibilidad para cargar fechas');
+            dateGrid.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #e74c3c;">
+                    <p>No se pudieron cargar las fechas disponibles</p>
+                    <button onclick="loadAvailabilityData()" style="margin-top: 10px; padding: 8px 16px; background-color: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Intentar nuevamente
+                    </button>
+                </div>
+            `;
             return;
         }
 
-        console.log('Datos de disponibilidad para fechas:', availabilityData);
-        console.log('Tipo de datos:', typeof availabilityData);
+        console.log('Datos de disponibilidad para fechas:', window.availabilityData);
+        console.log('Tipo de datos:', typeof window.availabilityData);
 
         // Obtener las fechas disponibles (claves del objeto)
-        const availableDates = Object.keys(availabilityData);
+        const availableDates = Object.keys(window.availabilityData);
         console.log('Fechas disponibles:', availableDates);
         console.log('Número de fechas:', availableDates.length);
         console.log('Fechas disponibles:', availableDates);
 
-        // Ordenar las fechas (opcional, dependiendo de cómo venga el JSON)
-        // Añadimos manejo de errores para evitar problemas con formatos de fecha inesperados
-        try {
-            availableDates.sort((a, b) => {
-                try {
-                    // Extraer el día del mes de cada fecha con manejo de errores
-                    const matchA = a.match(/\d+/);
-                    const matchB = b.match(/\d+/);
-
-                    if (!matchA || !matchB) {
-                        // Si no podemos extraer números, mantener el orden original
-                        return 0;
-                    }
-
-                    const dayA = parseInt(matchA[0]);
-                    const dayB = parseInt(matchB[0]);
-
-                    // Intentar extraer el mes de cada fecha
-                    const partsA = a.split(' de ');
-                    const partsB = b.split(' de ');
-
-                    // Si no podemos dividir la cadena correctamente, ordenar solo por día
-                    if (partsA.length < 2 || partsB.length < 2) {
-                        return dayA - dayB;
-                    }
-
-                    const monthA = partsA[1];
-                    const monthB = partsB[1];
-
-                    // Mapeo de nombres de meses a números
-                    const monthMap = {
-                        'Enero': 1, 'Febrero': 2, 'Marzo': 3, 'Abril': 4, 'Mayo': 5, 'Junio': 6,
-                        'Julio': 7, 'Agosto': 8, 'Septiembre': 9, 'Octubre': 10, 'Noviembre': 11, 'Diciembre': 12
-                    };
-
-                    // Comparar primero por mes, luego por día
-                    if (monthMap[monthA] !== monthMap[monthB]) {
-                        // Si alguno de los meses no está en el mapa, mantener el orden original
-                        if (!monthMap[monthA] || !monthMap[monthB]) {
-                            return 0;
-                        }
-                        return monthMap[monthA] - monthMap[monthB];
-                    }
-                    return dayA - dayB;
-                } catch (error) {
-                    console.log('Error al comparar fechas:', error);
-                    return 0; // Mantener el orden original en caso de error
-                }
-            });
-        } catch (error) {
-            console.log('Error al ordenar fechas:', error);
-            // No hacer nada, usar el orden original
+        // Si no hay fechas disponibles, mostrar mensaje
+        if (availableDates.length === 0) {
+            dateGrid.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #e74c3c;">
+                    <p>No hay fechas disponibles en este momento</p>
+                    <p>Por favor, intenta más tarde o contacta directamente a la clínica</p>
+                </div>
+            `;
+            return;
         }
+
+        // Ordenar las fechas (opcional, dependiendo de cómo venga el JSON)
+        // Simplemente usamos el orden en que vienen las fechas del servidor
+        // No intentamos ordenarlas para evitar problemas con formatos inesperados
+        console.log('Usando fechas en el orden proporcionado por el servidor');
 
         // Añadir cada fecha al grid
         availableDates.forEach(date => {
@@ -1010,7 +1006,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Cargar horas disponibles para la fecha seleccionada
-    function loadAvailableHours() {
+    // Hacemos la función global para poder llamarla desde el HTML
+    window.loadAvailableHours = function() {
         console.log('%c=== CARGANDO HORAS DISPONIBLES ===', 'background: #9b59b6; color: white; padding: 5px; border-radius: 5px;');
         const dateInput = document.getElementById('preferred-date');
         const timeInput = document.getElementById('preferred-time');
@@ -1037,16 +1034,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         console.log('Verificando disponibilidad para la fecha:', selectedDate);
-        console.log('Datos de disponibilidad:', availabilityData);
-        console.log('Existe la fecha en los datos?', availabilityData && availabilityData[selectedDate] ? 'Sí' : 'No');
+        console.log('Datos de disponibilidad:', window.availabilityData);
+        console.log('Existe la fecha en los datos?', window.availabilityData && window.availabilityData[selectedDate] ? 'Sí' : 'No');
 
-        if (!availabilityData || !availabilityData[selectedDate]) {
+        if (!window.availabilityData || !window.availabilityData[selectedDate]) {
             console.error('No hay datos de disponibilidad para la fecha seleccionada');
             return;
         }
 
         // Obtener los horarios disponibles para la fecha seleccionada
-        let availableTimes = availabilityData[selectedDate];
+        let availableTimes = window.availabilityData[selectedDate];
         console.log('%cHorarios disponibles para', 'color: #f39c12; font-weight: bold;', selectedDate, ':', availableTimes);
         console.log('Tipo de datos de horarios:', typeof availableTimes);
         console.log('¿Es un array?', Array.isArray(availableTimes));
@@ -1121,8 +1118,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Cargar fechas y horas desde el webhook al iniciar
-    loadAvailabilityData();
+    // NO cargar fechas al iniciar, lo haremos cuando el usuario haga clic en "Ver disponibilidad"
+    // loadAvailabilityData();
 
     // Obtener referencia al campo de WhatsApp
     const whatsappField = document.getElementById('whatsapp');
@@ -1130,11 +1127,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Precargar el campo con "549" (para Argentina) pero permitir que el usuario lo borre si lo desea
     if (whatsappField && whatsappField.value === '') {
         whatsappField.value = '549';
-    }
-
-    // Solo cargar horas si hay fechas disponibles
-    if (availabilityData && Object.keys(availabilityData).length > 0) {
-        loadAvailableHours();
     }
 
     // WhatsApp validation
