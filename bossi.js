@@ -311,20 +311,6 @@ window.submitForm = function() {
 // Esta función ha sido reemplazada por la nueva implementación que usa pasos
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Mostrar el landing-content y ocultar el quiz-container al inicio
-    const landingContent = document.getElementById('landing-content');
-    const quizContainer = document.getElementById('quiz-container');
-
-    if (landingContent) {
-        landingContent.style.display = 'flex';
-        landingContent.style.opacity = '1';
-    }
-
-    if (quizContainer) {
-        quizContainer.style.display = 'none';
-        quizContainer.style.opacity = '0';
-    }
-
     // Generar dinámicamente el HTML de los precios si hay tratamientos en la configuración
     if (CONFIG && CONFIG.treatments && CONFIG.treatments.length > 0) {
         const priceList = document.querySelector('.price-list');
@@ -807,33 +793,20 @@ document.addEventListener('DOMContentLoaded', () => {
             // Fade in form container
             setTimeout(() => {
                 formContainer.style.opacity = '1';
-
-                // Cargar fechas disponibles cuando se muestra el formulario
-                console.log('Cargando fechas disponibles al mostrar el formulario');
-                loadAvailabilityData();
             }, 50);
         }, 300);
     });
 
     // Variable global para almacenar los datos de disponibilidad
-    window.availabilityData = null;
+    let availabilityData = null;
 
     // URL del webhook para obtener fechas y horarios disponibles
     const availabilityWebhookUrl = CONFIG && CONFIG.webhooks ? CONFIG.webhooks.availability : 'https://sswebhookss.odontolab.co/webhook/f424d581-8261-4141-bcd6-4b021cf61d39';
 
     // Cargar fechas y horarios disponibles desde el webhook
-    // Hacemos la función global para poder llamarla desde el HTML
-    window.loadAvailabilityData = async function() {
+    async function loadAvailabilityData() {
         console.log('%c=== INICIO CARGA DE DISPONIBILIDAD ===', 'background: #3498db; color: white; padding: 5px; border-radius: 5px;');
         console.log('Cargando datos de disponibilidad desde el webhook...');
-
-        // Ocultar el grid de fechas y mostrar el indicador de carga
-        const dateGrid = document.getElementById('date-grid');
-        const loadingDates = document.getElementById('loading-dates');
-
-        if (dateGrid) dateGrid.style.display = 'none';
-        if (loadingDates) loadingDates.style.display = 'flex';
-
         try {
             console.log('URL del webhook:', availabilityWebhookUrl);
             console.log('Realizando petición al webhook...');
@@ -854,21 +827,16 @@ document.addEventListener('DOMContentLoaded', () => {
             // La respuesta es un array con un objeto dentro
             if (Array.isArray(responseData) && responseData.length > 0) {
                 console.log('La respuesta es un array. Extrayendo primer elemento...');
-                window.availabilityData = responseData[0];
+                availabilityData = responseData[0];
             } else {
                 console.log('La respuesta no es un array o está vacía. Usando directamente...');
-                window.availabilityData = responseData;
-            }
-
-            // Verificar si availabilityData es un objeto y tiene propiedades
-            if (!window.availabilityData || typeof window.availabilityData !== 'object' || Object.keys(window.availabilityData).length === 0) {
-                throw new Error('No se recibieron datos de disponibilidad válidos');
+                availabilityData = responseData;
             }
 
             console.log('%cDatos de disponibilidad procesados:', 'color: #2ecc71; font-weight: bold;');
-            console.log(window.availabilityData);
-            console.log('Tipo de datos procesados:', typeof window.availabilityData);
-            console.log('Claves disponibles:', Object.keys(window.availabilityData));
+            console.log(availabilityData);
+            console.log('Tipo de datos procesados:', typeof availabilityData);
+            console.log('Claves disponibles:', Object.keys(availabilityData));
 
             // Cargar las fechas disponibles en el selector
             loadAvailableDates();
@@ -891,83 +859,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 timeDisplay.textContent = 'Selecciona una hora';
             }
 
-            // Mostrar el grid de fechas y ocultar el indicador de carga
-            if (dateGrid) dateGrid.style.display = 'grid';
-            if (loadingDates) loadingDates.style.display = 'none';
-
             return true;
         } catch (error) {
             console.error('Error al cargar datos de disponibilidad:', error);
-
-            // Mostrar mensaje de error en el indicador de carga
-            if (loadingDates) {
-                loadingDates.innerHTML = `
-                    <p style="color: #e74c3c;">Error al cargar fechas disponibles</p>
-                    <p style="font-size: 0.9rem; margin-top: 5px; color: #666;">Por favor, recarga la página o intenta más tarde.</p>
-                    <button onclick="location.reload()" style="margin-top: 15px; padding: 8px 16px; background-color: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">Recargar página</button>
-                `;
-            }
-
+            alert('Hubo un problema al cargar las fechas disponibles. Por favor, recarga la página.');
             return false;
         }
     }
 
     // Cargar fechas disponibles en el selector
-    // Hacemos la función global para poder llamarla desde el HTML
-    window.loadAvailableDates = function() {
+    function loadAvailableDates() {
         console.log('%c=== CARGANDO FECHAS DISPONIBLES ===', 'background: #e74c3c; color: white; padding: 5px; border-radius: 5px;');
         const dateInput = document.getElementById('preferred-date');
         const dateGrid = document.getElementById('date-grid');
         console.log('Input de fechas encontrado:', dateInput ? 'Sí' : 'No');
         console.log('Grid de fechas encontrado:', dateGrid ? 'Sí' : 'No');
 
-        // Verificar que los elementos existan
-        if (!dateGrid || !dateInput) {
-            console.error('No se encontraron los elementos necesarios para cargar fechas');
-            return;
-        }
-
         // Limpiar el grid de fechas
         console.log('Limpiando grid de fechas...');
         dateGrid.innerHTML = '';
 
-        if (!window.availabilityData) {
+        if (!availabilityData) {
             console.error('No hay datos de disponibilidad para cargar fechas');
-            dateGrid.innerHTML = `
-                <div style="text-align: center; padding: 20px; color: #e74c3c;">
-                    <p>No se pudieron cargar las fechas disponibles</p>
-                    <button onclick="loadAvailabilityData()" style="margin-top: 10px; padding: 8px 16px; background-color: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
-                        Intentar nuevamente
-                    </button>
-                </div>
-            `;
             return;
         }
 
-        console.log('Datos de disponibilidad para fechas:', window.availabilityData);
-        console.log('Tipo de datos:', typeof window.availabilityData);
+        console.log('Datos de disponibilidad para fechas:', availabilityData);
+        console.log('Tipo de datos:', typeof availabilityData);
 
         // Obtener las fechas disponibles (claves del objeto)
-        const availableDates = Object.keys(window.availabilityData);
+        const availableDates = Object.keys(availabilityData);
         console.log('Fechas disponibles:', availableDates);
         console.log('Número de fechas:', availableDates.length);
         console.log('Fechas disponibles:', availableDates);
 
-        // Si no hay fechas disponibles, mostrar mensaje
-        if (availableDates.length === 0) {
-            dateGrid.innerHTML = `
-                <div style="text-align: center; padding: 20px; color: #e74c3c;">
-                    <p>No hay fechas disponibles en este momento</p>
-                    <p>Por favor, intenta más tarde o contacta directamente a la clínica</p>
-                </div>
-            `;
-            return;
-        }
-
         // Ordenar las fechas (opcional, dependiendo de cómo venga el JSON)
-        // Simplemente usamos el orden en que vienen las fechas del servidor
-        // No intentamos ordenarlas para evitar problemas con formatos inesperados
-        console.log('Usando fechas en el orden proporcionado por el servidor');
+        // Esto asume que las fechas tienen un formato consistente como "Día X de Mes"
+        availableDates.sort((a, b) => {
+            // Extraer el día del mes de cada fecha
+            const dayA = parseInt(a.match(/\d+/)[0]);
+            const dayB = parseInt(b.match(/\d+/)[0]);
+
+            // Extraer el mes de cada fecha
+            const monthA = a.split(' de ')[1];
+            const monthB = b.split(' de ')[1];
+
+            // Mapeo de nombres de meses a números
+            const monthMap = {
+                'Enero': 1, 'Febrero': 2, 'Marzo': 3, 'Abril': 4, 'Mayo': 5, 'Junio': 6,
+                'Julio': 7, 'Agosto': 8, 'Septiembre': 9, 'Octubre': 10, 'Noviembre': 11, 'Diciembre': 12
+            };
+
+            // Comparar primero por mes, luego por día
+            if (monthMap[monthA] !== monthMap[monthB]) {
+                return monthMap[monthA] - monthMap[monthB];
+            }
+            return dayA - dayB;
+        });
 
         // Añadir cada fecha al grid
         availableDates.forEach(date => {
@@ -1006,8 +954,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Cargar horas disponibles para la fecha seleccionada
-    // Hacemos la función global para poder llamarla desde el HTML
-    window.loadAvailableHours = function() {
+    function loadAvailableHours() {
         console.log('%c=== CARGANDO HORAS DISPONIBLES ===', 'background: #9b59b6; color: white; padding: 5px; border-radius: 5px;');
         const dateInput = document.getElementById('preferred-date');
         const timeInput = document.getElementById('preferred-time');
@@ -1034,16 +981,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         console.log('Verificando disponibilidad para la fecha:', selectedDate);
-        console.log('Datos de disponibilidad:', window.availabilityData);
-        console.log('Existe la fecha en los datos?', window.availabilityData && window.availabilityData[selectedDate] ? 'Sí' : 'No');
+        console.log('Datos de disponibilidad:', availabilityData);
+        console.log('Existe la fecha en los datos?', availabilityData && availabilityData[selectedDate] ? 'Sí' : 'No');
 
-        if (!window.availabilityData || !window.availabilityData[selectedDate]) {
+        if (!availabilityData || !availabilityData[selectedDate]) {
             console.error('No hay datos de disponibilidad para la fecha seleccionada');
             return;
         }
 
         // Obtener los horarios disponibles para la fecha seleccionada
-        let availableTimes = window.availabilityData[selectedDate];
+        let availableTimes = availabilityData[selectedDate];
         console.log('%cHorarios disponibles para', 'color: #f39c12; font-weight: bold;', selectedDate, ':', availableTimes);
         console.log('Tipo de datos de horarios:', typeof availableTimes);
         console.log('¿Es un array?', Array.isArray(availableTimes));
@@ -1118,89 +1065,86 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // NO cargar fechas al iniciar, lo haremos cuando el usuario haga clic en "Ver disponibilidad"
-    // loadAvailabilityData();
+    // Cargar fechas y horas desde el webhook al iniciar
+    loadAvailabilityData();
 
     // Obtener referencia al campo de WhatsApp
     const whatsappField = document.getElementById('whatsapp');
 
-    // Precargar el campo con "549" (para Argentina) pero permitir que el usuario lo borre si lo desea
-    if (whatsappField && whatsappField.value === '') {
-        whatsappField.value = '549';
+    // Precargar el campo con "521" pero permitir que el usuario lo borre si lo desea
+    if (whatsappField.value === '') {
+        whatsappField.value = '521';
     }
+    loadAvailableHours();
 
     // WhatsApp validation
     const whatsappInput = whatsappField; // Usar la misma referencia
     const whatsappValidation = document.getElementById('whatsapp-validation');
 
-    // Validar el número de WhatsApp en tiempo real (solo si existen los elementos)
-    if (whatsappInput && whatsappValidation) {
-        whatsappInput.addEventListener('input', function() {
-            // Limpiar el mensaje de validación cuando el usuario escribe
-            whatsappValidation.textContent = '';
-            whatsappValidation.className = 'validation-message';
-        });
-    }
+    // Validar el número de WhatsApp en tiempo real
+    whatsappInput.addEventListener('input', function() {
+        // Limpiar el mensaje de validación cuando el usuario escribe
+        whatsappValidation.textContent = '';
+        whatsappValidation.className = 'validation-message';
+    });
 
     // Validar el número de WhatsApp cuando el usuario termina de escribir
-    if (whatsappInput && whatsappValidation) {
-        whatsappInput.addEventListener('blur', function() {
-            const whatsappNumber = this.value.trim();
+    whatsappInput.addEventListener('blur', function() {
+        const whatsappNumber = this.value.trim();
 
-            // Si el campo está vacío, no validar
-            if (!whatsappNumber) {
-                return;
-            }
+        // Si el campo está vacío, no validar
+        if (!whatsappNumber) {
+            return;
+        }
 
-            // Eliminar todos los caracteres no numéricos para la validación
-            const digitsOnly = whatsappNumber.replace(/\D/g, '');
+        // Eliminar todos los caracteres no numéricos para la validación
+        const digitsOnly = whatsappNumber.replace(/\D/g, '');
 
-            // Validación básica de formato
-            if (digitsOnly.length < 10 || digitsOnly.length > 15) {
-                whatsappValidation.textContent = 'Ingresa un número válido (al menos 10 dígitos)';
-                whatsappValidation.className = 'validation-message error';
-                return;
-            }
+        // Validación básica de formato
+        if (digitsOnly.length < 10 || digitsOnly.length > 15) {
+            whatsappValidation.textContent = 'Ingresa un número válido (al menos 10 dígitos)';
+            whatsappValidation.className = 'validation-message error';
+            return;
+        }
 
-            // Mostrar mensaje de verificación
-            whatsappValidation.textContent = 'Verificando número...';
-            whatsappValidation.className = 'validation-message';
+        // Mostrar mensaje de verificación
+        whatsappValidation.textContent = 'Verificando número...';
+        whatsappValidation.className = 'validation-message';
 
-            // Llamada al webhook para validar el número de WhatsApp
-            fetch(CONFIG && CONFIG.webhooks ? CONFIG.webhooks.whatsappValidation : 'https://sswebhookss.odontolab.co/webhook/02eb0643-1b9d-4866-87a7-f892d6a945ea', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ whatsapp_check: digitsOnly })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('API Response:', data);
+        // Llamada al webhook para validar el número de WhatsApp
+        fetch(CONFIG && CONFIG.webhooks ? CONFIG.webhooks.whatsappValidation : 'https://sswebhookss.odontolab.co/webhook/02eb0643-1b9d-4866-87a7-f892d6a945ea', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ whatsapp_check: digitsOnly })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('API Response:', data);
 
-                if (data && typeof data.exists === 'boolean') {
-                    if (data.exists === true) {
-                        // El número existe en WhatsApp
-                        whatsappValidation.textContent = 'Número de WhatsApp válido';
-                        whatsappValidation.className = 'validation-message success';
-                    } else {
-                        // El número no existe en WhatsApp
-                        whatsappValidation.textContent = 'Este número no tiene WhatsApp activo';
-                        whatsappValidation.className = 'validation-message error';
-                    }
+            if (data && typeof data.exists === 'boolean') {
+                if (data.exists === true) {
+                    // El número existe en WhatsApp
+                    whatsappValidation.textContent = 'Número de WhatsApp válido';
+                    whatsappValidation.className = 'validation-message success';
                 } else {
-                    // Respuesta inesperada de la API
-                    whatsappValidation.textContent = 'No se pudo verificar el número';
+                    // El número no existe en WhatsApp
+                    whatsappValidation.textContent = 'Este número no tiene WhatsApp activo';
                     whatsappValidation.className = 'validation-message error';
                 }
-            })
-            .catch(error => {
-                console.error('Error validando WhatsApp:', error);
-                whatsappValidation.textContent = 'Error al verificar el número';
+            } else {
+                // Respuesta inesperada de la API
+                whatsappValidation.textContent = 'No se pudo verificar el número';
                 whatsappValidation.className = 'validation-message error';
-            });
+            }
+        })
+        .catch(error => {
+            console.error('Error validando WhatsApp:', error);
+            whatsappValidation.textContent = 'Error al verificar el número';
+            whatsappValidation.className = 'validation-message error';
         });
-    }
+    });
 
     // Handle review button click
     // Nota: Ya no necesitamos estas referencias porque usamos funciones globales
@@ -1359,44 +1303,33 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('form-step-1').style.display = 'block';
     });
 
-    // El botón 'back-to-form-button' ya no existe en el HTML actual
-    // Este código era para el paso 3 (confirmación) que ha sido eliminado
-    // Comentamos este código para evitar errores
-    /*
     // Manejar el clic en el botón de regresar al paso 2
-    const backToFormButton = document.getElementById('back-to-form-button');
-    if (backToFormButton) {
-        backToFormButton.addEventListener('click', () => {
-            console.log('Back to form button clicked');
+    document.getElementById('back-to-form-button').addEventListener('click', () => {
+        console.log('Back to form button clicked');
 
-            // Mostrar el paso 2 (datos personales) y ocultar el paso 3 (confirmación)
-            const formStep3 = document.getElementById('form-step-3');
-            if (formStep3) {
-                formStep3.style.display = 'none';
-            }
-            document.getElementById('form-step-2').style.display = 'block';
+        // Mostrar el paso 2 (datos personales) y ocultar el paso 3 (confirmación)
+        document.getElementById('form-step-3').style.display = 'none';
+        document.getElementById('form-step-2').style.display = 'block';
 
-            // Enfocar el campo de WhatsApp
-            setTimeout(() => {
-                const whatsappInput = document.getElementById('whatsapp');
-                if (whatsappInput) {
-                    console.log('Enfocando campo de WhatsApp');
-                    whatsappInput.focus();
+        // Enfocar el campo de WhatsApp
+        setTimeout(() => {
+            const whatsappInput = document.getElementById('whatsapp');
+            if (whatsappInput) {
+                console.log('Enfocando campo de WhatsApp');
+                whatsappInput.focus();
 
-                    // Posicionar el cursor al final del valor precargado
-                    const valorPrecargado = whatsappInput.value;
-                    if (valorPrecargado) {
-                        // Usar setTimeout para asegurar que el foco ya está establecido
-                        setTimeout(() => {
-                            // Mover el cursor al final del texto
-                            whatsappInput.selectionStart = whatsappInput.selectionEnd = valorPrecargado.length;
-                        }, 50);
-                    }
+                // Posicionar el cursor al final del valor precargado
+                const valorPrecargado = whatsappInput.value;
+                if (valorPrecargado) {
+                    // Usar setTimeout para asegurar que el foco ya está establecido
+                    setTimeout(() => {
+                        // Mover el cursor al final del texto
+                        whatsappInput.selectionStart = whatsappInput.selectionEnd = valorPrecargado.length;
+                    }, 50);
                 }
-            }, 100);
-        });
-    }
-    */
+            }
+        }, 100);
+    });
     // Ya no necesitamos el manejador para el botón 'confirm-button' porque lo hemos reemplazado por 'finish-button'
 
     // Manejar el clic en el botón de finalizar
