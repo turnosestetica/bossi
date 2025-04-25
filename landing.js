@@ -264,6 +264,7 @@ window.submitForm = function() {
         videollamada_previa: formData.videollamada_previa || 'No',
         peso: formData.peso || '',
         altura: formData.altura || '',
+        duda_principal: formData.duda_principal || '',
         estado: "NUEVO",
         origen: "Landing Dra. Constanza Bossi"
     };
