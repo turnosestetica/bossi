@@ -1866,6 +1866,53 @@ document.addEventListener('DOMContentLoaded', () => {
         const preferredTime = document.getElementById('preferred-time').value;
         const mainDoubt = document.getElementById('main_doubt').value || '';
 
+        // Recopilar respuestas del cuestionario para el landingUrl
+        const questionnaire = {};
+        for (const key in answers) {
+            if (answers.hasOwnProperty(key)) {
+                questionnaire[key] = answers[key].value;
+            }
+        }
+
+        // Preparar las respuestas en el formato correcto
+        let respuestasTexto = '';
+        questions.forEach(question => {
+            if (answers[question.key]) {
+                respuestasTexto += `${question.question}: ${answers[question.key].value}\n`;
+            }
+        });
+
+        // Agregar la duda principal a las respuestas si existe
+        if (mainDoubt && mainDoubt.trim() !== '') {
+            respuestasTexto += `¿Cuál es tu principal duda sobre el procedimiento?: ${mainDoubt}\n`;
+        }
+
+        // Preparar datos completos para el webhook
+        const formData = {
+            fullname: fullname,
+            whatsapp: whatsapp,
+            tratamiento_interes: answers.procedure ? answers.procedure.value : 'Cirugía plástica',
+            fecha_cita: `${preferredDate} ${preferredTime}`,
+            fecha: preferredDate,
+            hora: preferredTime,
+            landingUrl: window.location.href,
+            respuestas: respuestasTexto,
+            respuestas_detalladas: {},
+            videollamada_previa: answers.videocall ? (answers.videocall.value.includes('Sí') ? 'Sí' : 'No') : 'No',
+            peso: answers.weight ? answers.weight.value : '',
+            altura: answers.height ? answers.height.value : '',
+            duda_principal: mainDoubt,
+            estado: "NUEVO",
+            origen: "Landing Dra. Constanza Bossi"
+        };
+
+        // Agregar todas las respuestas individuales
+        questions.forEach(question => {
+            if (answers[question.key]) {
+                formData.respuestas_detalladas[question.key] = answers[question.key].value;
+            }
+        });
+
         // Validar que todos los campos requeridos estén completos
         if (!fullname || !whatsapp || !preferredDate || !preferredTime) {
             alert('Por favor completa todos los campos del formulario.');
@@ -1895,27 +1942,6 @@ document.addEventListener('DOMContentLoaded', () => {
         finishButton.disabled = true;
         finishButton.innerHTML = '<span class="loading-spinner"></span> Procesando...';
 
-        // Recopilar respuestas del cuestionario para el landingUrl
-        const questionnaire = {};
-        for (const key in answers) {
-            if (answers.hasOwnProperty(key)) {
-                questionnaire[key] = answers[key].value;
-            }
-        }
-
-        // Preparar las respuestas en el formato correcto
-        let respuestasTexto = '';
-        questions.forEach(question => {
-            if (answers[question.key]) {
-                respuestasTexto += `${question.question}: ${answers[question.key].value}\n`;
-            }
-        });
-
-        // Agregar la duda principal a las respuestas si existe
-        if (mainDoubt && mainDoubt.trim() !== '') {
-            respuestasTexto += `¿Cuál es tu principal duda sobre el procedimiento?: ${mainDoubt}\n`;
-        }
-
         // Primero, obtener el link de pago de Mercado Pago
         fetch('https://sswebhookss.odontolab.co/webhook/c0cb515e-caf1-424f-b67c-84c022d90eae', {
             method: 'POST',
@@ -1939,36 +1965,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data && data.length > 0 && data[0].mercadopago_linkpersonalizado_creado) {
                 const mercadoPagoLink = data[0].mercadopago_linkpersonalizado_creado;
 
-                // Preparar datos completos para el webhook
-                const formData = {
-                    fullname: fullname,
-                    whatsapp: whatsapp,
-                    tratamiento_interes: answers.treatment_type ? answers.treatment_type.value : 'Cirugía plástica',
-                    fecha_cita: `${preferredDate} ${preferredTime}`,
-                    fecha: preferredDate,
-                    hora: preferredTime,
-                    landingUrl: window.location.href,
-                    respuestas: respuestasTexto,
-                    respuestas_detalladas: {},
-                    videollamada_previa: answers.videocall ? (answers.videocall.value.includes('Sí') ? 'Sí' : 'No') : 'No',
-                    peso: answers.weight ? answers.weight.value : '',
-                    altura: answers.height ? answers.height.value : '',
-                    duda_principal: mainDoubt,
-                    estado: "NUEVO",
-                    origen: "Landing Dra. Constanza Bossi",
-                    mercadopago_link: mercadoPagoLink // Agregar el link de Mercado Pago
-                };
-
-                // Agregar todas las respuestas individuales
-                questions.forEach(question => {
-                    if (answers[question.key]) {
-                        formData.respuestas_detalladas[question.key] = answers[question.key].value;
-                    }
-                });
+                // Agregar el link de Mercado Pago a los datos del formulario
+                formData.mercadopago_link = mercadoPagoLink;
 
                 // Enviar datos al endpoint usando jQuery AJAX
+                const targetUrl = CONFIG && CONFIG.webhooks ? CONFIG.webhooks.formSubmission : "https://sswebhookss.odontolab.co/webhook/0dc8f34f-0992-419f-a841-b3782f2556a5";
+
                 jQuery.ajax({
-                    url: CONFIG && CONFIG.webhooks ? CONFIG.webhooks.formSubmission : "https://sswebhookss.odontolab.co/webhook/0dc8f34f-0992-419f-a841-b3782f2556a5",
+                    url: targetUrl,
                     data: JSON.stringify(formData),
                     type: "POST",
                     contentType: "application/json",
