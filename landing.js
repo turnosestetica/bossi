@@ -1961,9 +1961,20 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             console.log("Respuesta del servidor de Mercado Pago:", data);
 
-            // Verificar si la respuesta contiene el link de Mercado Pago
-            if (data && data.length > 0 && data[0].mercadopago_linkpersonalizado_creado) {
-                const mercadoPagoLink = data[0].mercadopago_linkpersonalizado_creado;
+            // Extraer el link de Mercado Pago de la respuesta (maneja diferentes formatos)
+            let mercadoPagoLink = null;
+
+            // Si la respuesta es un array, buscar en el primer elemento
+            if (Array.isArray(data) && data.length > 0 && data[0].mercadopago_linkpersonalizado_creado) {
+                mercadoPagoLink = data[0].mercadopago_linkpersonalizado_creado;
+            }
+            // Si la respuesta es un objeto directo, buscar la propiedad directamente
+            else if (data && data.mercadopago_linkpersonalizado_creado) {
+                mercadoPagoLink = data.mercadopago_linkpersonalizado_creado;
+            }
+
+            // Verificar si se encontró el link de Mercado Pago
+            if (mercadoPagoLink) {
 
                 // Agregar el link de Mercado Pago a los datos del formulario
                 formData.mercadopago_link = mercadoPagoLink;
@@ -2011,6 +2022,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             } else {
                 console.error('No se recibió un link de Mercado Pago válido:', data);
+                console.log('Formato de respuesta no reconocido o falta la propiedad mercadopago_linkpersonalizado_creado');
 
                 // Remover el overlay
                 if (overlay && overlay.parentNode) {
