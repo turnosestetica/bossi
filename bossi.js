@@ -807,6 +807,14 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadAvailabilityData() {
         console.log('%c=== INICIO CARGA DE DISPONIBILIDAD ===', 'background: #3498db; color: white; padding: 5px; border-radius: 5px;');
         console.log('Cargando datos de disponibilidad desde el webhook...');
+
+        // Ocultar el grid de fechas y mostrar el indicador de carga
+        const dateGrid = document.getElementById('date-grid');
+        const loadingDates = document.getElementById('loading-dates');
+
+        if (dateGrid) dateGrid.style.display = 'none';
+        if (loadingDates) loadingDates.style.display = 'flex';
+
         try {
             console.log('URL del webhook:', availabilityWebhookUrl);
             console.log('Realizando petición al webhook...');
@@ -831,6 +839,11 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 console.log('La respuesta no es un array o está vacía. Usando directamente...');
                 availabilityData = responseData;
+            }
+
+            // Verificar si availabilityData es un objeto y tiene propiedades
+            if (!availabilityData || typeof availabilityData !== 'object' || Object.keys(availabilityData).length === 0) {
+                throw new Error('No se recibieron datos de disponibilidad válidos');
             }
 
             console.log('%cDatos de disponibilidad procesados:', 'color: #2ecc71; font-weight: bold;');
@@ -859,10 +872,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 timeDisplay.textContent = 'Selecciona una hora';
             }
 
+            // Mostrar el grid de fechas y ocultar el indicador de carga
+            if (dateGrid) dateGrid.style.display = 'grid';
+            if (loadingDates) loadingDates.style.display = 'none';
+
             return true;
         } catch (error) {
             console.error('Error al cargar datos de disponibilidad:', error);
-            alert('Hubo un problema al cargar las fechas disponibles. Por favor, recarga la página.');
+
+            // Mostrar mensaje de error en el indicador de carga
+            if (loadingDates) {
+                loadingDates.innerHTML = `
+                    <p style="color: #e74c3c;">Error al cargar fechas disponibles</p>
+                    <p style="font-size: 0.9rem; margin-top: 5px; color: #666;">Por favor, recarga la página o intenta más tarde.</p>
+                    <button onclick="location.reload()" style="margin-top: 15px; padding: 8px 16px; background-color: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">Recargar página</button>
+                `;
+            }
+
             return false;
         }
     }
@@ -894,28 +920,58 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Fechas disponibles:', availableDates);
 
         // Ordenar las fechas (opcional, dependiendo de cómo venga el JSON)
-        // Esto asume que las fechas tienen un formato consistente como "Día X de Mes"
-        availableDates.sort((a, b) => {
-            // Extraer el día del mes de cada fecha
-            const dayA = parseInt(a.match(/\d+/)[0]);
-            const dayB = parseInt(b.match(/\d+/)[0]);
+        // Añadimos manejo de errores para evitar problemas con formatos de fecha inesperados
+        try {
+            availableDates.sort((a, b) => {
+                try {
+                    // Extraer el día del mes de cada fecha con manejo de errores
+                    const matchA = a.match(/\d+/);
+                    const matchB = b.match(/\d+/);
 
-            // Extraer el mes de cada fecha
-            const monthA = a.split(' de ')[1];
-            const monthB = b.split(' de ')[1];
+                    if (!matchA || !matchB) {
+                        // Si no podemos extraer números, mantener el orden original
+                        return 0;
+                    }
 
-            // Mapeo de nombres de meses a números
-            const monthMap = {
-                'Enero': 1, 'Febrero': 2, 'Marzo': 3, 'Abril': 4, 'Mayo': 5, 'Junio': 6,
-                'Julio': 7, 'Agosto': 8, 'Septiembre': 9, 'Octubre': 10, 'Noviembre': 11, 'Diciembre': 12
-            };
+                    const dayA = parseInt(matchA[0]);
+                    const dayB = parseInt(matchB[0]);
 
-            // Comparar primero por mes, luego por día
-            if (monthMap[monthA] !== monthMap[monthB]) {
-                return monthMap[monthA] - monthMap[monthB];
-            }
-            return dayA - dayB;
-        });
+                    // Intentar extraer el mes de cada fecha
+                    const partsA = a.split(' de ');
+                    const partsB = b.split(' de ');
+
+                    // Si no podemos dividir la cadena correctamente, ordenar solo por día
+                    if (partsA.length < 2 || partsB.length < 2) {
+                        return dayA - dayB;
+                    }
+
+                    const monthA = partsA[1];
+                    const monthB = partsB[1];
+
+                    // Mapeo de nombres de meses a números
+                    const monthMap = {
+                        'Enero': 1, 'Febrero': 2, 'Marzo': 3, 'Abril': 4, 'Mayo': 5, 'Junio': 6,
+                        'Julio': 7, 'Agosto': 8, 'Septiembre': 9, 'Octubre': 10, 'Noviembre': 11, 'Diciembre': 12
+                    };
+
+                    // Comparar primero por mes, luego por día
+                    if (monthMap[monthA] !== monthMap[monthB]) {
+                        // Si alguno de los meses no está en el mapa, mantener el orden original
+                        if (!monthMap[monthA] || !monthMap[monthB]) {
+                            return 0;
+                        }
+                        return monthMap[monthA] - monthMap[monthB];
+                    }
+                    return dayA - dayB;
+                } catch (error) {
+                    console.log('Error al comparar fechas:', error);
+                    return 0; // Mantener el orden original en caso de error
+                }
+            });
+        } catch (error) {
+            console.log('Error al ordenar fechas:', error);
+            // No hacer nada, usar el orden original
+        }
 
         // Añadir cada fecha al grid
         availableDates.forEach(date => {
@@ -1071,80 +1127,88 @@ document.addEventListener('DOMContentLoaded', () => {
     // Obtener referencia al campo de WhatsApp
     const whatsappField = document.getElementById('whatsapp');
 
-    // Precargar el campo con "521" pero permitir que el usuario lo borre si lo desea
-    if (whatsappField.value === '') {
-        whatsappField.value = '521';
+    // Precargar el campo con "549" (para Argentina) pero permitir que el usuario lo borre si lo desea
+    if (whatsappField && whatsappField.value === '') {
+        whatsappField.value = '549';
     }
-    loadAvailableHours();
+
+    // Solo cargar horas si hay fechas disponibles
+    if (availabilityData && Object.keys(availabilityData).length > 0) {
+        loadAvailableHours();
+    }
 
     // WhatsApp validation
     const whatsappInput = whatsappField; // Usar la misma referencia
     const whatsappValidation = document.getElementById('whatsapp-validation');
 
-    // Validar el número de WhatsApp en tiempo real
-    whatsappInput.addEventListener('input', function() {
-        // Limpiar el mensaje de validación cuando el usuario escribe
-        whatsappValidation.textContent = '';
-        whatsappValidation.className = 'validation-message';
-    });
+    // Validar el número de WhatsApp en tiempo real (solo si existen los elementos)
+    if (whatsappInput && whatsappValidation) {
+        whatsappInput.addEventListener('input', function() {
+            // Limpiar el mensaje de validación cuando el usuario escribe
+            whatsappValidation.textContent = '';
+            whatsappValidation.className = 'validation-message';
+        });
+    }
 
     // Validar el número de WhatsApp cuando el usuario termina de escribir
-    whatsappInput.addEventListener('blur', function() {
-        const whatsappNumber = this.value.trim();
+    if (whatsappInput && whatsappValidation) {
+        whatsappInput.addEventListener('blur', function() {
+            const whatsappNumber = this.value.trim();
 
-        // Si el campo está vacío, no validar
-        if (!whatsappNumber) {
-            return;
-        }
+            // Si el campo está vacío, no validar
+            if (!whatsappNumber) {
+                return;
+            }
 
-        // Eliminar todos los caracteres no numéricos para la validación
-        const digitsOnly = whatsappNumber.replace(/\D/g, '');
+            // Eliminar todos los caracteres no numéricos para la validación
+            const digitsOnly = whatsappNumber.replace(/\D/g, '');
 
-        // Validación básica de formato
-        if (digitsOnly.length < 10 || digitsOnly.length > 15) {
-            whatsappValidation.textContent = 'Ingresa un número válido (al menos 10 dígitos)';
-            whatsappValidation.className = 'validation-message error';
-            return;
-        }
+            // Validación básica de formato
+            if (digitsOnly.length < 10 || digitsOnly.length > 15) {
+                whatsappValidation.textContent = 'Ingresa un número válido (al menos 10 dígitos)';
+                whatsappValidation.className = 'validation-message error';
+                return;
+            }
 
-        // Mostrar mensaje de verificación
-        whatsappValidation.textContent = 'Verificando número...';
-        whatsappValidation.className = 'validation-message';
+            // Mostrar mensaje de verificación
+            whatsappValidation.textContent = 'Verificando número...';
+            whatsappValidation.className = 'validation-message';
 
-        // Llamada al webhook para validar el número de WhatsApp
-        fetch(CONFIG && CONFIG.webhooks ? CONFIG.webhooks.whatsappValidation : 'https://sswebhookss.odontolab.co/webhook/02eb0643-1b9d-4866-87a7-f892d6a945ea', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ whatsapp_check: digitsOnly })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('API Response:', data);
+            // Llamada al webhook para validar el número de WhatsApp
+            fetch(CONFIG && CONFIG.webhooks ? CONFIG.webhooks.whatsappValidation : 'https://sswebhookss.odontolab.co/webhook/02eb0643-1b9d-4866-87a7-f892d6a945ea', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ whatsapp_check: digitsOnly })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Response:', data);
 
-            if (data && typeof data.exists === 'boolean') {
-                if (data.exists === true) {
-                    // El número existe en WhatsApp
-                    whatsappValidation.textContent = 'Número de WhatsApp válido';
-                    whatsappValidation.className = 'validation-message success';
+                if (data && typeof data.exists === 'boolean') {
+                    if (data.exists === true) {
+                        // El número existe en WhatsApp
+                        whatsappValidation.textContent = 'Número de WhatsApp válido';
+                        whatsappValidation.className = 'validation-message success';
+                    } else {
+                        // El número no existe en WhatsApp
+                        whatsappValidation.textContent = 'Este número no tiene WhatsApp activo';
+                        whatsappValidation.className = 'validation-message error';
+                    }
                 } else {
-                    // El número no existe en WhatsApp
-                    whatsappValidation.textContent = 'Este número no tiene WhatsApp activo';
+                    // Respuesta inesperada de la API
+                    whatsappValidation.textContent = 'No se pudo verificar el número';
                     whatsappValidation.className = 'validation-message error';
                 }
-            } else {
-                // Respuesta inesperada de la API
-                whatsappValidation.textContent = 'No se pudo verificar el número';
+            })
+            .catch(error => {
+                console.error('Error validando WhatsApp:', error);
+                whatsappValidation.textContent = 'Error al verificar el número';
                 whatsappValidation.className = 'validation-message error';
-            }
-        })
-        .catch(error => {
-            console.error('Error validando WhatsApp:', error);
-            whatsappValidation.textContent = 'Error al verificar el número';
-            whatsappValidation.className = 'validation-message error';
+            });
         });
-    });
+    }
 
     // Handle review button click
     // Nota: Ya no necesitamos estas referencias porque usamos funciones globales
@@ -1303,33 +1367,44 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('form-step-1').style.display = 'block';
     });
 
+    // El botón 'back-to-form-button' ya no existe en el HTML actual
+    // Este código era para el paso 3 (confirmación) que ha sido eliminado
+    // Comentamos este código para evitar errores
+    /*
     // Manejar el clic en el botón de regresar al paso 2
-    document.getElementById('back-to-form-button').addEventListener('click', () => {
-        console.log('Back to form button clicked');
+    const backToFormButton = document.getElementById('back-to-form-button');
+    if (backToFormButton) {
+        backToFormButton.addEventListener('click', () => {
+            console.log('Back to form button clicked');
 
-        // Mostrar el paso 2 (datos personales) y ocultar el paso 3 (confirmación)
-        document.getElementById('form-step-3').style.display = 'none';
-        document.getElementById('form-step-2').style.display = 'block';
-
-        // Enfocar el campo de WhatsApp
-        setTimeout(() => {
-            const whatsappInput = document.getElementById('whatsapp');
-            if (whatsappInput) {
-                console.log('Enfocando campo de WhatsApp');
-                whatsappInput.focus();
-
-                // Posicionar el cursor al final del valor precargado
-                const valorPrecargado = whatsappInput.value;
-                if (valorPrecargado) {
-                    // Usar setTimeout para asegurar que el foco ya está establecido
-                    setTimeout(() => {
-                        // Mover el cursor al final del texto
-                        whatsappInput.selectionStart = whatsappInput.selectionEnd = valorPrecargado.length;
-                    }, 50);
-                }
+            // Mostrar el paso 2 (datos personales) y ocultar el paso 3 (confirmación)
+            const formStep3 = document.getElementById('form-step-3');
+            if (formStep3) {
+                formStep3.style.display = 'none';
             }
-        }, 100);
-    });
+            document.getElementById('form-step-2').style.display = 'block';
+
+            // Enfocar el campo de WhatsApp
+            setTimeout(() => {
+                const whatsappInput = document.getElementById('whatsapp');
+                if (whatsappInput) {
+                    console.log('Enfocando campo de WhatsApp');
+                    whatsappInput.focus();
+
+                    // Posicionar el cursor al final del valor precargado
+                    const valorPrecargado = whatsappInput.value;
+                    if (valorPrecargado) {
+                        // Usar setTimeout para asegurar que el foco ya está establecido
+                        setTimeout(() => {
+                            // Mover el cursor al final del texto
+                            whatsappInput.selectionStart = whatsappInput.selectionEnd = valorPrecargado.length;
+                        }, 50);
+                    }
+                }
+            }, 100);
+        });
+    }
+    */
     // Ya no necesitamos el manejador para el botón 'confirm-button' porque lo hemos reemplazado por 'finish-button'
 
     // Manejar el clic en el botón de finalizar
