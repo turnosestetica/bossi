@@ -28,7 +28,7 @@ const CLIENTS_CONFIG = {
       qualificationAction: "Agenda una consulta para recibir una evaluación personalizada.",
       priceNote: "Podrías ser candidato para un procedimiento de cirugía plástica. Para comprobarlo, solicita una cita de evaluación.",
       confirmationText: {
-        saveAndRedirect: "Al dar clic en <strong>Finalizar</strong>, se guardarán los datos de tu cita y serás redireccionado al WhatsApp oficial de la Dra. Constanza Bossi para confirmar tu cita.",
+        saveAndRedirect: "Al dar clic en <strong>Finalizar</strong>, se guardarán los datos de tu cita y serás redireccionado a MercadoPago para pagar tu cita. Sólo confirmamos citas con pago anticipado. Si no finalizas el pago tu cita se libera automáticamente.",
         depositInfo: "Recuerda que se requiere el pago anticipado de la cita de $23.000 para confirmar tu turno."
       },
       whatsappMessage: {
