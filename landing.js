@@ -1,4 +1,6 @@
 // Variables globales - Definidas en el ámbito global para que sean accesibles desde el HTML
+let availabilityDataLoaded = false;
+// Variables globales - Definidas en el ámbito global para que sean accesibles desde el HTML
 
 // Detectar qué configuración de cliente usar basado en el nombre del archivo HTML
 function detectClientConfig() {
@@ -95,6 +97,7 @@ window.goBackToForm = function() {
 // Función para enviar el formulario
 window.submitForm = function() {
     console.log('submitForm called');
+    console.log('submitForm() called');
 
     // Deshabilitar el botón para evitar envíos duplicados
     const confirmButton = document.getElementById('confirm-button');
@@ -877,34 +880,45 @@ document.addEventListener('DOMContentLoaded', () => {
             document.head.appendChild(style);
         }
 
-        // Cargar los datos de disponibilidad sin mostrar alertas (false)
-        loadAvailabilityData(false)
-            .then(success => {
-                console.log('Precarga de datos de disponibilidad completada:', success ? 'exitosa' : 'fallida');
+        // Cargar los datos de disponibilidad sin mostrar alertas (false) solo si no se han cargado previamente
+        if (!availabilityDataLoaded) {
+            loadAvailabilityData(false)
+                .then(success => {
+                    console.log('Precarga de datos de disponibilidad completada:', success ? 'exitosa' : 'fallida');
 
-                // Actualizar el estado de carga
-                availabilityDataLoaded = success;
+                    // Actualizar el estado de carga
+                    availabilityDataLoaded = success;
 
-                // Quitar el indicador de carga
-                if (appointmentBtn) {
-                    const preloadingIndicator = appointmentBtn.querySelector('.preloading-indicator');
-                    if (preloadingIndicator) {
-                        preloadingIndicator.remove();
+                    // Quitar el indicador de carga
+                    if (appointmentBtn) {
+                        const preloadingIndicator = appointmentBtn.querySelector('.preloading-indicator');
+                        if (preloadingIndicator) {
+                            preloadingIndicator.remove();
+                        }
                     }
-                }
-            })
-            .catch(error => {
-                console.error('Error en la precarga de datos de disponibilidad:', error);
-                // No mostrar alerta al usuario ya que es una carga en segundo plano
+                })
+                .catch(error => {
+                    console.error('Error en la precarga de datos de disponibilidad:', error);
+                    // No mostrar alerta al usuario ya que es una carga en segundo plano
 
-                // Quitar el indicador de carga
-                if (appointmentBtn) {
-                    const preloadingIndicator = appointmentBtn.querySelector('.preloading-indicator');
-                    if (preloadingIndicator) {
-                        preloadingIndicator.remove();
+                    // Quitar el indicador de carga
+                    if (appointmentBtn) {
+                        const preloadingIndicator = appointmentBtn.querySelector('.preloading-indicator');
+                        if (preloadingIndicator) {
+                            preloadingIndicator.remove();
+                        }
                     }
+                });
+        } else {
+            console.log('Datos de disponibilidad ya precargados.');
+            // Quitar el indicador de carga si ya estaba presente (aunque no debería estarlo si ya cargó)
+            if (appointmentBtn) {
+                const preloadingIndicator = appointmentBtn.querySelector('.preloading-indicator');
+                if (preloadingIndicator) {
+                    preloadingIndicator.remove();
                 }
-            });
+            }
+        }
     }
 
     // Determine if user qualifies
@@ -1063,31 +1077,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Cargar las fechas disponibles desde el webhook solo si no se han cargado previamente
             // Pasar true para mostrar alertas cuando el usuario hace clic en "Ver disponibilidad"
-            const loadDates = availabilityDataLoaded ? Promise.resolve(true) : loadAvailabilityData(true);
+            if (!availabilityDataLoaded) {
+                loadAvailabilityData(true).then(success => {
+                    // Restaurar el botón a su estado original
+                    appointmentButton.disabled = false;
+                    appointmentButton.innerHTML = 'Ver disponibilidad';
 
-            loadDates.then(success => {
-                // Restaurar el botón a su estado original
+                    if (!success) {
+                        // Si hubo un error al cargar las fechas, mostrar un mensaje
+                        alert('Hubo un problema al cargar las fechas disponibles. Por favor, intenta nuevamente.');
+                        // Volver a la pantalla anterior
+                        formContainer.style.opacity = '0';
+                        setTimeout(() => {
+                            formContainer.style.display = 'none';
+                            resultsContainer.style.display = 'flex';
+                            setTimeout(() => {
+                                resultsContainer.style.opacity = '1';
+                            }, 50);
+                        }, 300);
+                    } else {
+                         // Actualizar el estado de carga
+                         availabilityDataLoaded = true;
+                         // Load dates and times into the form
+                         loadAvailableDates();
+                    }
+                });
+            } else {
+                console.log('Datos de disponibilidad ya precargados. Mostrando formulario.');
+                // If data was already loaded, just show the grids and hide the loaders
+                if (dateGrid) dateGrid.style.display = 'grid';
+                if (timeGrid) timeGrid.style.display = 'grid';
+                if (loadingDates) loadingDates.style.display = 'none';
+                if (loadingTimes) loadingTimes.style.display = 'none';
+
+                // Restore the button to its original state
                 appointmentButton.disabled = false;
                 appointmentButton.innerHTML = 'Ver disponibilidad';
 
-                if (!success) {
-                    // Si hubo un error al cargar las fechas, mostrar un mensaje
-                    alert('Hubo un problema al cargar las fechas disponibles. Por favor, intenta nuevamente.');
-                    // Volver a la pantalla anterior
-                    formContainer.style.opacity = '0';
-                    setTimeout(() => {
-                        formContainer.style.display = 'none';
-                        resultsContainer.style.display = 'flex';
-                        setTimeout(() => {
-                            resultsContainer.style.opacity = '1';
-                        }, 50);
-                    }, 300);
-                } else if (availabilityDataLoaded) {
-                    // Si los datos ya estaban cargados, actualizar la interfaz
-                    console.log('Usando datos de disponibilidad precargados');
-                    loadAvailableDates();
-                }
-            });
+                // Load dates and times into the form
+                loadAvailableDates();
+            }
         }, 300);
     });
 
@@ -1186,12 +1215,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Hubo un problema al cargar las fechas disponibles. Por favor, intenta nuevamente.');
             }
             return false;
+console.log('loadAvailableDates() called');
         }
     }
 
     // Cargar fechas disponibles en el selector
     function loadAvailableDates() {
         console.log('%c=== CARGANDO FECHAS DISPONIBLES ===', 'background: #e74c3c; color: white; padding: 5px; border-radius: 5px;');
+        console.log('loadAvailableDates() called');
         const dateInput = document.getElementById('preferred-date');
         const dateGrid = document.getElementById('date-grid');
         const loadingDates = document.getElementById('loading-dates');
@@ -1505,12 +1536,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('Precargando datos de disponibilidad en segundo plano...');
                     // Pasar false para no mostrar alertas en la carga en segundo plano
                     loadAvailabilityData(false).then(success => {
-                        if (success) {
-                            console.log('Datos de disponibilidad precargados correctamente');
-                            availabilityDataLoaded = true;
-                        } else {
-                            console.error('Error al precargar datos de disponibilidad');
-                        }
+                        availabilityDataLoaded = true;
                     });
                 }
             }, 500); // Esperar 500ms para asegurar que la UI se ha renderizado
