@@ -1326,6 +1326,25 @@ console.log('loadAvailableDates() called');
 
                     // Cargar las horas disponibles para esta fecha
                     loadAvailableHours();
+
+                    // Hacer scroll hacia la sección de horas y el botón de continuar
+                    setTimeout(() => {
+                        // Obtener la sección de horas
+                        const timeSection = document.querySelector('.selector-section:nth-child(2)');
+                        if (timeSection) {
+                            console.log('Haciendo scroll a la sección de horas');
+                            // Scroll suave hacia la sección de horas
+                            timeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        } else {
+                            // Si no se encuentra la sección de horas, intentar con el botón de continuar
+                            const continueButton = document.getElementById('next-step-button');
+                            if (continueButton) {
+                                console.log('Haciendo scroll al botón de continuar');
+                                // Scroll suave hacia el botón de continuar
+                                continueButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }
+                    }, 300); // Pequeño retraso para asegurar que las horas se hayan cargado
                 });
 
                 dateGrid.appendChild(dateOption);
@@ -1502,6 +1521,24 @@ console.log('loadAvailableDates() called');
 
                     // Actualizar el texto de resumen
                     document.getElementById('selected-time-display').textContent = this.textContent;
+
+                    // Hacer scroll hacia el botón de continuar
+                    setTimeout(() => {
+                        // Intentar encontrar el botón de continuar
+                        const continueButton = document.getElementById('next-step-button');
+                        if (continueButton) {
+                            console.log('Haciendo scroll al botón de continuar después de seleccionar hora');
+                            // Scroll suave hacia el botón de continuar
+                            continueButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        } else {
+                            // Si no se encuentra el botón, intentar con la sección de resumen
+                            const summarySection = document.querySelector('.selection-summary');
+                            if (summarySection) {
+                                console.log('Haciendo scroll a la sección de resumen');
+                                summarySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }
+                    }, 100); // Retraso corto para asegurar que todo se ha renderizado correctamente
                 });
 
                 timeGrid.appendChild(timeOption);
@@ -1512,6 +1549,24 @@ console.log('loadAvailableDates() called');
             if (timeGrid) timeGrid.style.display = 'grid';
 
             console.log('Horarios cargados en el grid');
+
+            // Hacer scroll hacia el botón de continuar
+            setTimeout(() => {
+                // Intentar encontrar el botón de continuar
+                const continueButton = document.getElementById('next-step-button');
+                if (continueButton) {
+                    console.log('Haciendo scroll al botón de continuar después de cargar horas');
+                    // Scroll suave hacia el botón de continuar
+                    continueButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    // Si no se encuentra el botón, intentar con la sección de resumen
+                    const summarySection = document.querySelector('.selection-summary');
+                    if (summarySection) {
+                        console.log('Haciendo scroll a la sección de resumen');
+                        summarySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }, 500); // Retraso para asegurar que todo se ha renderizado correctamente
         } else {
             console.error('No se pudieron cargar los horarios porque no es un array');
 
