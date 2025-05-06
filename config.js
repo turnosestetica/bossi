@@ -105,8 +105,7 @@ const CLIENTS_CONFIG = {
           "91-95 kg",
           "96-100 kg",
           "101-110 kg",
-          "111-120 kg",
-          "Más de 120 kg"
+          "Más de 110 kg"
         ],
         key: "weight"
       },

@@ -592,6 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
             questionElement.classList.add('question');
             if (index === 0) questionElement.classList.add('active');
 
+            // Crear el contenedor de opciones
             questionElement.innerHTML = `
                 <h3>${question.question}</h3>
                 <div class="options">
@@ -600,6 +601,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     `).join('')}
                 </div>
             `;
+
+            // El contenedor de opciones ya está creado en el HTML anterior
 
             questionContainer.appendChild(questionElement);
         });
@@ -611,6 +614,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateButtons();
         updateProgressBar();
+
+        // Aplicar formato de grid a las opciones si es necesario
+        setupOptionsGrid();
     }
 
     // Select option
@@ -750,6 +756,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateButtons();
         updateProgressBar();
+
+        // Aplicar formato de grid a las opciones si es necesario
+        setTimeout(setupOptionsGrid, 100);
     }
 
     // Navigate to previous question
@@ -762,6 +771,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateButtons();
         updateProgressBar();
+
+        // Aplicar formato de grid a las opciones si es necesario
+        setTimeout(setupOptionsGrid, 100);
     }
 
     // Update navigation buttons
@@ -796,6 +808,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
         if (progressBar) {
             progressBar.style.width = `${progress}%`;
+        }
+    }
+
+    // Función para modificar la visualización de opciones en dos columnas
+    function setupOptionsGrid() {
+        // Buscar preguntas específicas que necesitan mostrar opciones en dos columnas
+        const weightQuestion = Array.from(document.querySelectorAll('.question')).find(q =>
+            q.querySelector('h3') && q.querySelector('h3').textContent.toLowerCase().includes('peso'));
+
+        const heightQuestion = Array.from(document.querySelectorAll('.question')).find(q =>
+            q.querySelector('h3') && q.querySelector('h3').textContent.toLowerCase().includes('altura'));
+
+        const priceQuestion = Array.from(document.querySelectorAll('.question')).find(q =>
+            q.querySelector('h3') && (
+                q.querySelector('h3').textContent.toLowerCase().includes('precio') ||
+                q.querySelector('h3').textContent.toLowerCase().includes('presupuesto') ||
+                q.querySelector('h3').textContent.toLowerCase().includes('invertir')
+            ));
+
+        // Aplicar el estilo de grid a las opciones de peso y altura
+        if (weightQuestion) {
+            const optionsContainer = weightQuestion.querySelector('.options');
+            if (optionsContainer) {
+                optionsContainer.classList.add('options-grid');
+                console.log('Aplicando grid a opciones de peso');
+            }
+        }
+
+        if (heightQuestion) {
+            const optionsContainer = heightQuestion.querySelector('.options');
+            if (optionsContainer) {
+                optionsContainer.classList.add('options-grid');
+                console.log('Aplicando grid a opciones de altura');
+            }
+        }
+
+        // Aplicar el estilo de grid a las opciones de precio
+        if (priceQuestion) {
+            const optionsContainer = priceQuestion.querySelector('.options');
+            if (optionsContainer) {
+                optionsContainer.classList.add('options-grid');
+                console.log('Aplicando grid a opciones de precio');
+            }
         }
     }
 
@@ -834,10 +889,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (qualified) {
                 // Usar el mensaje de la configuración si está disponible
                 if (CONFIG && CONFIG.landingPage && CONFIG.landingPage.priceNote) {
-                    qualificationResult.textContent = CONFIG.landingPage.priceNote;
+                    qualificationResult.textContent = 'Podrías ser candidato. Para comprobarlo, solicita una cita de evaluación.';
                 } else {
                     // Fallback por si no hay configuración
-                    qualificationResult.textContent = 'Podrías ser candidato para este tratamiento. Para comprobarlo, solicita una cita de valoración.';
+                    qualificationResult.textContent = 'Podrías ser candidato. Para comprobarlo, solicita una cita de evaluación.';
                 }
                 qualificationResult.style.color = 'var(--primary-color)';
                 qualificationResult.classList.add('qualified');
@@ -974,6 +1029,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initQuiz();
     updateButtons();
     updateProgressBar();
+
+    // Configurar las opciones en formato de grid para peso y altura
+    setTimeout(setupOptionsGrid, 500); // Esperar a que el DOM esté completamente cargado
 
     // Inicializar el mensaje de estado del botón
     const buttonStatusMessage = document.getElementById('button-status-message');
