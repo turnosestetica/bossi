@@ -457,11 +457,65 @@ document.addEventListener('DOMContentLoaded', () => {
             // Limpiar la lista de precios
             priceList.innerHTML = '';
 
+            // Verificar qué procedimiento seleccionó el usuario
+            const selectedProcedure = window.answers.procedure ? window.answers.procedure.value : '';
+            console.log('Procedimiento seleccionado:', selectedProcedure);
+
+            // Normalizar el nombre del procedimiento para comparaciones más precisas
+            const normalizedProcedure = selectedProcedure.trim();
+
+            // Determinar si debemos mostrar todos los tratamientos o solo el seleccionado
+            const showAllTreatments =
+                !normalizedProcedure ||
+                normalizedProcedure.includes('Otro procedimiento') ||
+                normalizedProcedure.includes('no quirúrgicos') ||
+                normalizedProcedure.includes('estéticos');
+
+            console.log('Mostrar todos los tratamientos:', showAllTreatments);
+
+            // Limpiar el título de la sección de precios
+            const pricingTitle = document.querySelector('.pricing-info h3');
+            if (pricingTitle) {
+                // Siempre usar el mismo título, independientemente del procedimiento seleccionado
+                pricingTitle.textContent = 'Precio de Referencia';
+            }
+
             // Generar el HTML para cada tratamiento (excepto la valoración)
             CONFIG.treatments.forEach(treatment => {
                 // Omitir la valoración ya que se muestra arriba de la lista
                 if (treatment.name.toLowerCase().includes('valoración') || treatment.name.toLowerCase().includes('valoracion')) {
                     return; // Saltar este tratamiento
+                }
+
+                // Si no estamos mostrando todos los tratamientos, solo mostrar el seleccionado
+                if (!showAllTreatments) {
+                    // Comparación más precisa para el nombre del tratamiento
+                    const treatmentNameLower = treatment.name.toLowerCase().trim();
+                    const procedureLower = normalizedProcedure.toLowerCase().trim();
+
+                    console.log(`Comparando: "${treatmentNameLower}" con "${procedureLower}"`);
+
+                    // Caso especial para Lipoescultura
+                    if (procedureLower === "lipoescultura" && treatmentNameLower.includes("lipo")) {
+                        console.log(`✅ Caso especial para Lipoescultura: ${treatment.name}`);
+                    }
+                    // Verificar coincidencia exacta
+                    else if (treatmentNameLower === procedureLower) {
+                        console.log(`✅ Coincidencia exacta: ${treatment.name}`);
+                    }
+                    // Luego verificar si el tratamiento comienza con el procedimiento
+                    else if (treatmentNameLower.startsWith(procedureLower)) {
+                        console.log(`✅ El tratamiento comienza con el procedimiento: ${treatment.name}`);
+                    }
+                    // Luego verificar si el procedimiento comienza con el tratamiento
+                    else if (procedureLower.startsWith(treatmentNameLower)) {
+                        console.log(`✅ El procedimiento comienza con el tratamiento: ${treatment.name}`);
+                    }
+                    // Si ninguna de las condiciones anteriores se cumple, omitir este tratamiento
+                    else {
+                        console.log(`❌ Omitiendo tratamiento ${treatment.name} porque no coincide con ${normalizedProcedure}`);
+                        return; // Saltar este tratamiento si no coincide con el seleccionado
+                    }
                 }
                 const treatmentGroup = document.createElement('div');
                 treatmentGroup.className = 'treatment-group';
@@ -811,6 +865,131 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Cargar dinámicamente los precios según el procedimiento seleccionado
+    function loadPrices() {
+        console.log('Cargando precios dinámicamente...');
+
+        // Verificar si tenemos configuración de tratamientos
+        if (!CONFIG || !CONFIG.treatments || CONFIG.treatments.length === 0) {
+            console.log('No hay tratamientos configurados');
+            return;
+        }
+
+        // Obtener el contenedor de precios
+        const priceGrid = document.getElementById('price-grid');
+        if (!priceGrid) {
+            console.log('No se encontró el contenedor de precios');
+            return;
+        }
+
+        // Limpiar el contenedor de precios
+        priceGrid.innerHTML = '';
+
+        // Verificar qué procedimiento seleccionó el usuario
+        const selectedProcedure = window.answers.procedure ? window.answers.procedure.value : '';
+        console.log('Procedimiento seleccionado:', selectedProcedure);
+
+        // Normalizar el nombre del procedimiento para comparaciones más precisas
+        const normalizedProcedure = selectedProcedure.trim();
+
+        // Determinar si debemos mostrar todos los tratamientos o solo el seleccionado
+        const showAllTreatments =
+            !normalizedProcedure ||
+            normalizedProcedure.includes('Otro procedimiento') ||
+            normalizedProcedure.includes('no quirúrgicos') ||
+            normalizedProcedure.includes('estéticos');
+
+        console.log('Mostrar todos los tratamientos:', showAllTreatments);
+
+        // Actualizar el título de la sección de precios
+        const pricingTitle = document.querySelector('.pricing-info h3');
+        if (pricingTitle) {
+            // Siempre usar el mismo título, independientemente del procedimiento seleccionado
+            pricingTitle.textContent = 'Precio de Referencia';
+        }
+
+        // Siempre mostrar la consulta de evaluación
+        const evaluationCard = document.createElement('div');
+        evaluationCard.className = 'price-card';
+        evaluationCard.innerHTML = `
+            <div class="price-title">Consulta de Evaluación</div>
+            <div class="price-amount">$23.000</div>
+            <div class="price-note">Pago anticipado obligatorio para confirmar</div>
+        `;
+        priceGrid.appendChild(evaluationCard);
+
+        // Filtrar los tratamientos según la selección del usuario
+        let treatmentsToShow = [];
+
+        if (showAllTreatments) {
+            // Mostrar todos los tratamientos excepto la valoración
+            treatmentsToShow = CONFIG.treatments.filter(treatment =>
+                !treatment.name.toLowerCase().includes('valoración') &&
+                !treatment.name.toLowerCase().includes('valoracion'));
+        } else {
+            // Mostrar solo el tratamiento seleccionado
+            const procedureLower = normalizedProcedure.toLowerCase().trim();
+
+            // Caso especial para Lipoescultura
+            if (procedureLower === 'lipoescultura') {
+                treatmentsToShow = CONFIG.treatments.filter(treatment =>
+                    treatment.name.toLowerCase().includes('lipo') &&
+                    !treatment.name.toLowerCase().includes('valoración') &&
+                    !treatment.name.toLowerCase().includes('valoracion'));
+            } else {
+                // Para otros procedimientos, buscar coincidencias
+                treatmentsToShow = CONFIG.treatments.filter(treatment => {
+                    const treatmentNameLower = treatment.name.toLowerCase().trim();
+
+                    return (
+                        !treatment.name.toLowerCase().includes('valoración') &&
+                        !treatment.name.toLowerCase().includes('valoracion') &&
+                        (
+                            treatmentNameLower === procedureLower ||
+                            treatmentNameLower.startsWith(procedureLower) ||
+                            procedureLower.startsWith(treatmentNameLower)
+                        )
+                    );
+                });
+            }
+        }
+
+        console.log('Tratamientos a mostrar:', treatmentsToShow);
+
+        // Crear tarjetas de precio para cada tratamiento
+        treatmentsToShow.forEach(treatment => {
+            const priceCard = document.createElement('div');
+            priceCard.className = 'price-card';
+
+            const priceTitle = document.createElement('div');
+            priceTitle.className = 'price-title';
+            priceTitle.textContent = treatment.name;
+
+            const priceAmount = document.createElement('div');
+            priceAmount.className = 'price-amount';
+
+            // Determinar el texto del precio
+            if (treatment.initialPrice) {
+                priceAmount.textContent = `$${treatment.initialPrice.toLocaleString()}`;
+                if (treatment.isOffer) {
+                    priceAmount.textContent += ' (Oferta!)';
+                }
+            } else {
+                priceAmount.textContent = treatment.customNote || 'Precio personalizado';
+            }
+
+            const priceNote = document.createElement('div');
+            priceNote.className = 'price-note';
+            priceNote.textContent = 'Precio desde';
+
+            priceCard.appendChild(priceTitle);
+            priceCard.appendChild(priceAmount);
+            priceCard.appendChild(priceNote);
+
+            priceGrid.appendChild(priceCard);
+        });
+    }
+
     // Función para modificar la visualización de opciones en dos columnas
     function setupOptionsGrid() {
         // Buscar preguntas específicas que necesitan mostrar opciones en dos columnas
@@ -883,6 +1062,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Llamar a la función showResultsAndLoadData para mostrar los resultados y precargar los datos de disponibilidad
             showResultsAndLoadData();
 
+            // Cargar los precios dinámicamente según el procedimiento seleccionado
+            loadPrices();
+
             // Determine qualification
             const qualified = determineQualification();
 
@@ -910,6 +1092,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mostrar el contenedor de resultados
         resultsContainer.style.display = 'flex';
         resultsContainer.style.opacity = '1';
+
+        // La personalización del título de la sección de precios ahora se maneja en la generación de precios
 
         // Precargar los datos de disponibilidad en segundo plano
         console.log('Precargando datos de disponibilidad en segundo plano...');
