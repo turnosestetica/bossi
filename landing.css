@@ -939,6 +939,32 @@ body {
     gap: 1rem;
 }
 
+/* Contenedor del botón y su mensaje de estado */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+}
+
+/* Mensaje de estado del botón */
+.button-status-message {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.button-status-message.error {
+    color: #d9534f;
+    font-weight: 500;
+}
+
+.button-status-message.success {
+    color: #5cb85c;
+    font-weight: 500;
+}
+
 .back-button {
     background-color: #f0f0f0;
     color: var(--text-color);
@@ -1032,6 +1058,94 @@ body {
 .confirmation-instructions strong {
     color: var(--primary-color);
     font-weight: 600;
+}
+
+/* Estilos para el checkbox de confirmación de pago */
+.payment-confirmation-checkbox {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: var(--highlight-color-light);
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--highlight-color);
+}
+
+/* Contenedor del checkbox personalizado */
+.checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    font-size: 1rem;
+    user-select: none;
+    line-height: 1.4;
+}
+
+/* Ocultar el checkbox predeterminado */
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Crear el checkbox personalizado */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 24px;
+    width: 24px;
+    background-color: #fff;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+/* Al pasar el mouse sobre el contenedor, cambiar el color del checkbox */
+.checkbox-container:hover input ~ .checkmark {
+    background-color: #f0f0f0;
+}
+
+/* Cuando el checkbox está marcado, cambiar el color de fondo */
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--primary-color);
+}
+
+/* Crear el indicador de marca (oculto cuando no está marcado) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Mostrar el indicador cuando está marcado */
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Estilo del indicador de marca (✓) */
+.checkbox-container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Estilo para el texto del checkbox */
+#payment-confirmation-text {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+/* Estilo para la fecha y hora dentro del texto del checkbox */
+#payment-date-time {
+    font-weight: 700;
+    color: var(--primary-color);
 }
 
 .bank-details {
@@ -1413,6 +1527,94 @@ body {
 .button-status-message.success {
     color: #5cb85c;
     font-weight: 500;
+}
+
+/* Estilos para el checkbox de confirmación de pago */
+.payment-confirmation-checkbox {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: var(--highlight-color-light);
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--highlight-color);
+}
+
+/* Contenedor del checkbox personalizado */
+.checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    font-size: 1rem;
+    user-select: none;
+    line-height: 1.4;
+}
+
+/* Ocultar el checkbox predeterminado */
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Crear el checkbox personalizado */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 24px;
+    width: 24px;
+    background-color: #fff;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+/* Al pasar el mouse sobre el contenedor, cambiar el color del checkbox */
+.checkbox-container:hover input ~ .checkmark {
+    background-color: #f0f0f0;
+}
+
+/* Cuando el checkbox está marcado, cambiar el color de fondo */
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--primary-color);
+}
+
+/* Crear el indicador de marca (oculto cuando no está marcado) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Mostrar el indicador cuando está marcado */
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Estilo del indicador de marca (✓) */
+.checkbox-container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Estilo para el texto del checkbox */
+#payment-confirmation-text {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+/* Estilo para la fecha y hora dentro del texto del checkbox */
+#payment-date-time {
+    font-weight: 700;
+    color: var(--primary-color);
 }
 
 /* Estilos para móviles */

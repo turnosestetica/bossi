@@ -1698,14 +1698,32 @@ console.log('loadAvailableDates() called');
                     // Actualizar el estado del botón y el mensaje
                     const finishButton = document.getElementById('finish-button');
                     const buttonStatusMessage = document.getElementById('button-status-message');
+                    const paymentConfirmationCheckbox = document.getElementById('payment-confirmation-checkbox');
+                    const checkboxChecked = paymentConfirmationCheckbox && paymentConfirmationCheckbox.checked;
 
                     if (finishButton) {
-                        finishButton.disabled = false; // Habilitar el botón si el WhatsApp es válido
-                    }
+                        // Habilitar el botón solo si el WhatsApp es válido Y el checkbox está marcado
+                        finishButton.disabled = !checkboxChecked;
 
-                    if (buttonStatusMessage) {
-                        buttonStatusMessage.textContent = 'Número de WhatsApp válido';
-                        buttonStatusMessage.className = 'button-status-message success';
+                        if (!checkboxChecked) {
+                            // Si el checkbox no está marcado, mostrar mensaje apropiado
+                            if (buttonStatusMessage) {
+                                buttonStatusMessage.textContent = 'Debes confirmar que entiendes la política de pago';
+                                buttonStatusMessage.className = 'button-status-message';
+                            }
+                        } else {
+                            // Si el checkbox está marcado y el WhatsApp es válido
+                            if (buttonStatusMessage) {
+                                buttonStatusMessage.textContent = 'Todo listo para continuar';
+                                buttonStatusMessage.className = 'button-status-message success';
+                            }
+                        }
+                    } else {
+                        // Si no hay botón de finalizar, actualizar solo el mensaje de validación
+                        if (buttonStatusMessage) {
+                            buttonStatusMessage.textContent = 'Número de WhatsApp válido';
+                            buttonStatusMessage.className = 'button-status-message success';
+                        }
                     }
                 } else {
                     // El número no existe en WhatsApp
@@ -1888,6 +1906,15 @@ console.log('loadAvailableDates() called');
             });
         }
 
+        // Actualizar el texto del checkbox de confirmación de pago con la fecha y hora seleccionadas
+        const paymentDateTimeElement = document.getElementById('payment-date-time');
+        if (paymentDateTimeElement) {
+            // Obtener el texto visible de la fecha seleccionada
+            const selectedDateDisplay = document.getElementById('selected-date-display').textContent;
+            const selectedTimeDisplay = document.getElementById('selected-time-display').textContent;
+            paymentDateTimeElement.textContent = `${selectedDateDisplay} a las ${selectedTimeDisplay}`;
+        }
+
         // Mostrar el paso 2 (datos personales)
         document.getElementById('form-step-1').style.display = 'none';
         document.getElementById('form-step-2').style.display = 'block';
@@ -1981,10 +2008,47 @@ console.log('loadAvailableDates() called');
         });
     }
 
+    // Manejar el checkbox de confirmación de pago
+    const paymentConfirmationCheckbox = document.getElementById('payment-confirmation-checkbox');
+    if (paymentConfirmationCheckbox) {
+        paymentConfirmationCheckbox.addEventListener('change', function() {
+            // Obtener el botón de finalizar
+            const finishButton = document.getElementById('finish-button');
+            const buttonStatusMessage = document.getElementById('button-status-message');
+
+            if (finishButton) {
+                // Verificar si el WhatsApp ha sido validado
+                const whatsappValidation = document.getElementById('whatsapp-validation');
+                const whatsappIsValid = whatsappValidation && whatsappValidation.classList.contains('success');
+
+                // Habilitar el botón solo si el checkbox está marcado Y el WhatsApp es válido
+                if (this.checked && whatsappIsValid) {
+                    finishButton.disabled = false;
+                    if (buttonStatusMessage) {
+                        buttonStatusMessage.textContent = 'Todo listo para continuar';
+                        buttonStatusMessage.className = 'button-status-message success';
+                    }
+                } else if (!this.checked) {
+                    finishButton.disabled = true;
+                    if (buttonStatusMessage) {
+                        buttonStatusMessage.textContent = 'Debes confirmar que entiendes la política de pago';
+                        buttonStatusMessage.className = 'button-status-message';
+                    }
+                } else if (!whatsappIsValid) {
+                    finishButton.disabled = true;
+                    if (buttonStatusMessage) {
+                        buttonStatusMessage.textContent = 'Verifica tu número de WhatsApp para continuar';
+                        buttonStatusMessage.className = 'button-status-message';
+                    }
+                }
+            }
+        });
+    }
+
     // Manejar el botón de finalizar
     const finishButtonElement = document.getElementById('finish-button');
     if (finishButtonElement) {
-        // Deshabilitar el botón de finalizar por defecto hasta que el WhatsApp sea validado
+        // Deshabilitar el botón de finalizar por defecto hasta que el WhatsApp sea validado y el checkbox marcado
         finishButtonElement.disabled = true;
 
         finishButtonElement.addEventListener('click', () => {

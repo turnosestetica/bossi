@@ -310,13 +310,20 @@
                             <input type="text" id="main_doubt" name="main_doubt" placeholder="Escribe aquí tu duda o pregunta" required>
                         </div>
 
-                        <div class="confirmation-instructions">
-                            <p id="save-redirect-text">Al dar clic en <strong>PAGAR CITA →</strong>, se guardarán los datos de tu cita y serás redireccionado a MercadoPago para pagar tu cita. Sólo confirmamos citas con pago anticipado. Si no finalizas el pago tu cita se libera automáticamente.</p>
+                        <div class="payment-confirmation-checkbox">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="payment-confirmation-checkbox">
+                                <span class="checkmark"></span>
+                                <span id="payment-confirmation-text">Entiendo que si no pago los $23.000 de mi cita ahora pierdo la reserva para <span id="payment-date-time">la fecha y hora seleccionada</span></span>
+                            </label>
                         </div>
 
                         <div class="confirmation-footer">
                             <button type="button" id="prev-step-button" class="back-button">← Regresar</button>
-                            <button type="button" id="finish-button" class="submit-button">PAGAR CITA →</button>
+                            <div class="button-container">
+                                <button type="button" id="finish-button" class="submit-button" disabled>PAGAR CITA →</button>
+                                <div id="button-status-message" class="button-status-message">Debes confirmar que entiendes la política de pago</div>
+                            </div>
                         </div>
                     </form>
                 </div>
