@@ -52,7 +52,8 @@ const CLIENTS_CONFIG = {
 
     // Webhooks
     webhooks: {
-      availability: "https://script.google.com/macros/s/AKfycby5o5wpGUPsaC3IhZgGlV-em6iBWKZCItsvqdkkNRM5xXNd_JtnvYVz3OYdTocn99MlQg/exec?fechasdisponibles=1",
+     // availability: "https://script.google.com/macros/s/AKfycby5o5wpGUPsaC3IhZgGlV-em6iBWKZCItsvqdkkNRM5xXNd_JtnvYVz3OYdTocn99MlQg/exec?fechasdisponibles=1",
+      availability: "https://sswebhookss.odontolab.co/webhook/f424d581-8261-4141-bcd6-4b021cf61d39",
       whatsappValidation: "https://sswebhookss.odontolab.co/webhook/02eb0643-1b9d-4866-87a7-f892d6a945ea",
       formSubmission: "https://sswebhookss.odontolab.co/webhook/0dc8f34f-0992-419f-a841-b3782f2556a5"
     },
