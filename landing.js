@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const landingContent = document.getElementById('landing-content');
