@@ -29,13 +29,13 @@ const CLIENTS_CONFIG = {
       priceNote: "Podrías ser candidato para un procedimiento de cirugía plástica. Para comprobarlo, solicita una cita de evaluación.",
       confirmationText: {
         saveAndRedirect: "Al dar clic en <strong>PAGAR CITA →</strong>, se guardarán los datos de tu cita y serás redireccionado a MercadoPago para pagar tu cita. Sólo confirmamos citas con pago anticipado. Si no finalizas el pago tu cita se libera automáticamente.",
-        depositInfo: "Recuerda que se requiere el pago anticipado de la cita de $23.000 para confirmar tu turno."
+        depositInfo: "Recuerda que se requiere el pago anticipado de la cita de $28.000 para confirmar tu turno."
       },
       whatsappMessage: {
         greeting: "Hola, soy {nombre} y me interesa agendar una consulta con la Dra. Constanza Bossi.",
         contactInfo: "*DATOS DE CONTACTO*\n- Nombre: {nombre}\n- WhatsApp: {whatsapp}",
         appointmentInfo: "*CITA SOLICITADA*\n- Fecha: {fecha}\n- Hora: {hora}",
-        depositInfo: "*ENTIENDO QUE:*\n- Se requiere el pago anticipado de la cita de $23.000 para confirmar mi turno",
+        depositInfo: "*ENTIENDO QUE:*\n- Se requiere el pago anticipado de la cita de $28.000 para confirmar mi turno",
         questionnaireInfo: "*RESPUESTAS DEL CUESTIONARIO*\n{respuestas}",
         treatmentType: "cirugía plástica"
       }
@@ -136,7 +136,7 @@ const CLIENTS_CONFIG = {
         initialPrice: 30000,
         monthlyFee: null,
         isOffer: true,
-        highlightText: "$23.000 con pago anticipado (¡Ahorras $7.000!)",
+        highlightText: "$28.000 con pago anticipado",
         customNote: "Evaluación personalizada con la Dra. Constanza Bossi"
       },
       {
