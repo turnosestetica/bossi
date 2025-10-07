@@ -131,7 +131,7 @@ window.submitForm = function() {
     message += `- Fecha: ${formattedDate}\n`;
     message += `- Hora: ${preferredTime}\n\n`;
     message += `*ENTIENDO QUE:*\n`;
-    message += `- Se requiere un pago anticipado de $23.000 para confirmar mi cita\n`;
+    message += `- Se requiere un pago anticipado de $28.000 para confirmar mi cita\n`;
     message += `- Este pago es obligatorio para reservar la consulta\n\n`;
     message += `*RESPUESTAS DEL CUESTIONARIO*\n`;
 
@@ -913,7 +913,7 @@ document.addEventListener('DOMContentLoaded', () => {
         evaluationCard.className = 'price-card';
         evaluationCard.innerHTML = `
             <div class="price-title">Consulta de Evaluación</div>
-            <div class="price-amount">$23.000</div>
+            <div class="price-amount">$28.000</div>
             <div class="price-note">Pago anticipado obligatorio para confirmar</div>
         `;
         priceGrid.appendChild(evaluationCard);
