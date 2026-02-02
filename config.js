@@ -53,8 +53,6 @@ const CLIENTS_CONFIG = {
     // Webhooks
     webhooks: {
       availability: "https://script.google.com/macros/s/AKfycby5o5wpGUPsaC3IhZgGlV-em6iBWKZCItsvqdkkNRM5xXNd_JtnvYVz3OYdTocn99MlQg/exec?fechasdisponibles=1",
-     //    availability: "https://sswebhookss.odontolab.co/webhook/f424d581-8261-4141-bcd6-4b021cf61d39",     
-     // availability: "https://sswebhookss.odontolab.co/webhook/65727428-6a5d-4ee0-98f6-1e54d47d9715",
       whatsappValidation: "https://sswebhookss.odontolab.co/webhook/02eb0643-1b9d-4866-87a7-f892d6a945ea",
       formSubmission: "https://sswebhookss.odontolab.co/webhook/0dc8f34f-0992-419f-a841-b3782f2556a5"
     },
@@ -129,61 +127,61 @@ const CLIENTS_CONFIG = {
       }
     ],
 
-    // Tratamientos y precios
+    // Tratamientos y precios (ACTUALIZADOS)
     treatments: [
       {
         name: "Consulta de Evaluación",
-        initialPrice: 30000,
+        initialPrice: 28000,
         monthlyFee: null,
         isOffer: true,
-        highlightText: "$28.000 con pago anticipado",
+        highlightText: "$28.000 (Pago anticipado)",
         customNote: "Evaluación personalizada con la Dra. Constanza Bossi"
       },
       {
         name: "Lipoescultura",
-        initialPrice: 2800000,
-        monthlyFee: null,
-        priceFormat: "simple"
-      },
-      {
-        name: "Aumento mamario",
-        initialPrice: 2900000,
+        initialPrice: 4200000,
         monthlyFee: null,
         priceFormat: "simple"
       },
       {
         name: "Lipoabdominoplastia",
-        initialPrice: 3200000,
+        initialPrice: 4600000,
         monthlyFee: null,
         priceFormat: "simple"
       },
       {
+        name: "Aumento mamario",
+        initialPrice: 3000000,
+        monthlyFee: null,
+        priceFormat: "simple"
+      },
+      {
+        name: "Remodelación costal",
+        initialPrice: 4600000,
+        monthlyFee: null,
+        priceFormat: "simple",
+        customNote: "Sin asociación con otros procedimientos"
+      },
+      {
         name: "Toxina botulínica (Botox)",
-        initialPrice: 300000,
+        initialPrice: 390000,
         monthlyFee: null,
         priceFormat: "simple",
         customNote: "Para arrugas de expresión"
       },
       {
         name: "Ácido hialurónico",
-        initialPrice: 280000,
+        initialPrice: 350000,
         monthlyFee: null,
         priceFormat: "simple",
         customNote: "Precio desde. Varía según zonas a tratar"
       },
       {
         name: "Rinomodelación",
-        initialPrice: 320000,
+        initialPrice: 400000,
         monthlyFee: null,
         priceFormat: "simple",
         customNote: "Con ácido hialurónico"
-      },
-      {
-        name: "Remodelación costal",
-        initialPrice: 4500000,
-        monthlyFee: null,
-        priceFormat: "simple",
-        customNote: "Sin asociación con otros procedimientos"
       }
     ],
 
