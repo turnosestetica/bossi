@@ -12,9 +12,8 @@
     <!-- Archivo de configuración -->
     <script src="config.js"></script>
 
-    <!-- Meta Pixel Code (se configura dinámicamente desde config.js) -->
+    <!-- Meta Pixel Code -->
     <script>
-    // Cargar el script base de Facebook Pixel
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -24,36 +23,25 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    // Función para inicializar el Pixel con el ID correcto
     function initFacebookPixel() {
-        // Detectar qué configuración de cliente usar
         const path = window.location.pathname;
         const filename = path.substring(path.lastIndexOf('/') + 1).replace('.html', '');
-        let pixelId = '1222298238852708'; // ID del Pixel de Bossi como fallback
+        let pixelId = '1222298238852708'; 
 
-        // Buscar el ID del Pixel en la configuración
         if (CLIENTS_CONFIG && CLIENTS_CONFIG[filename] &&
             CLIENTS_CONFIG[filename].facebookPixel &&
             CLIENTS_CONFIG[filename].facebookPixel.id) {
             pixelId = CLIENTS_CONFIG[filename].facebookPixel.id;
-            console.log('Usando Pixel ID de la configuración:', pixelId);
-        } else {
-            pixelId = '1222298238852708'; // ID del Pixel de Bossi como fallback
-            console.log('Usando Pixel ID por defecto:', pixelId);
         }
 
-        // Inicializar el Pixel con el ID correcto
         fbq('init', pixelId);
         fbq('track', 'PageView');
 
-        // Actualizar la imagen del noscript
         const noscriptImg = document.getElementById('fb-pixel-noscript');
         if (noscriptImg) {
             noscriptImg.src = `https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`;
         }
     }
-
-    // Inicializar el Pixel cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', initFacebookPixel);
     </script>
     <noscript><img id="fb-pixel-noscript" height="1" width="1" style="display:none"
@@ -98,7 +86,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Spinner para el botón */
         .loading-spinner {
             display: inline-block;
             width: 20px;
@@ -109,6 +96,17 @@
             animation: spin 1s ease-in-out infinite;
             margin-right: 8px;
             vertical-align: middle;
+        }
+
+        /* Estilo simple para la lista de precios estática */
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .price-item strong {
+            font-weight: 600;
         }
     </style>
 </head>
@@ -155,13 +153,18 @@
 
             <h2 id="qualification-result"></h2>
 
-
-
             <div class="pricing-info">
                 <h3>Precios de Referencia</h3>
 
+                <!-- Precios estáticos actualizados -->
                 <div class="price-grid" id="price-grid">
-                    <!-- Los precios se cargarán dinámicamente según el procedimiento seleccionado -->
+                    <div class="price-item"><span>Lipoescultura</span> <strong>$4.200.000</strong></div>
+                    <div class="price-item"><span>Lipoabdominoplastia</span> <strong>$4.600.000</strong></div>
+                    <div class="price-item"><span>Aumento mamario</span> <strong>$3.000.000</strong></div>
+                    <div class="price-item"><span>Remodelación costal</span> <strong>$4.600.000</strong></div>
+                    <div class="price-item"><span>Toxina botulínica</span> <strong>$390.000</strong></div>
+                    <div class="price-item"><span>Ácido hialurónico</span> <strong>$350.000</strong></div>
+                    <div class="price-item"><span>Rinomodelación</span> <strong>$400.000</strong></div>
                 </div>
 
                 <div class="payment-note">
@@ -184,8 +187,6 @@
 
             <h2>Agenda tu consulta con la Dra. Constanza Bossi</h2>
 
-
-
             <div class="form-steps">
                 <!-- Paso 1: Seleccionar fecha y hora -->
                 <div class="form-step" id="form-step-1">
@@ -193,9 +194,7 @@
                         <div class="date-time-selector">
                             <div class="selector-section">
                                 <h4>Selecciona una fecha</h4>
-                                <div class="date-grid" id="date-grid">
-                                    <!-- Las fechas se cargarán dinámicamente con JavaScript -->
-                                </div>
+                                <div class="date-grid" id="date-grid"></div>
                                 <div class="loading-dates" id="loading-dates">
                                     <div class="loading-spinner-large"></div>
                                     <p>Consultando fechas disponibles en la agenda de la Dra. Bossi...</p>
@@ -206,9 +205,7 @@
 
                             <div class="selector-section">
                                 <h4>Selecciona una hora</h4>
-                                <div class="time-grid" id="time-grid">
-                                    <!-- Las horas se cargarán dinámicamente con JavaScript -->
-                                </div>
+                                <div class="time-grid" id="time-grid"></div>
                                 <div class="loading-times" id="loading-times">
                                     <div class="loading-spinner-large"></div>
                                     <p>Selecciona primero una fecha para ver los horarios disponibles</p>
@@ -264,8 +261,6 @@
                         </div>
                     </form>
                 </div>
-
-
             </div>
         </div>
     </div>
