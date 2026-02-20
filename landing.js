@@ -76,7 +76,7 @@ window.questions = CONFIG && CONFIG.questions ? CONFIG.questions : [
 ]; // Para almacenar las preguntas del cuestionario
 
 // Función para volver al formulario desde la página de confirmación
-window.goBackToForm = function() {
+window.goBackToForm = function () {
     console.log('goBackToForm called');
 
     const formStep1 = document.getElementById('form-step-1');
@@ -95,7 +95,7 @@ window.goBackToForm = function() {
 }
 
 // Función para enviar el formulario
-window.submitForm = function() {
+window.submitForm = function () {
     console.log('submitForm called');
     console.log('submitForm() called');
 
@@ -131,8 +131,8 @@ window.submitForm = function() {
     message += `- Fecha: ${formattedDate}\n`;
     message += `- Hora: ${preferredTime}\n\n`;
     message += `*ENTIENDO QUE:*\n`;
-    message += `- Se requiere un pago anticipado de $28.000 para confirmar mi cita\n`;
-    message += `- Este pago es obligatorio para reservar la consulta\n\n`;
+    message += `- Se requiere un pago anticipado de $14.000 (50%) para confirmar mi cita\n`;
+    message += `- El 50% restante ($14.000) lo abonaré el día de la consulta en la clínica\n\n`;
     message += `*RESPUESTAS DEL CUESTIONARIO*\n`;
 
     // Agregar respuestas del cuestionario al mensaje
@@ -279,48 +279,48 @@ window.submitForm = function() {
         },
         body: JSON.stringify(webhookData)
     })
-    .then(response => {
-        console.log("Respuesta del servidor:", response);
+        .then(response => {
+            console.log("Respuesta del servidor:", response);
 
-        if (!response.ok) {
-            throw new Error('Error en la respuesta del servidor');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Datos recibidos:", data);
+            if (!response.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Datos recibidos:", data);
 
-        // Mostrar mensaje de éxito
-        const successMessage = document.getElementById('success-message');
-        const errorMessage = document.getElementById('error-message');
+            // Mostrar mensaje de éxito
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
 
-        if (successMessage) successMessage.style.display = 'flex';
-        if (errorMessage) errorMessage.style.display = 'none';
+            if (successMessage) successMessage.style.display = 'flex';
+            if (errorMessage) errorMessage.style.display = 'none';
 
-        // Esperar 2 segundos y luego redirigir a WhatsApp en la misma pestaña
-        setTimeout(function() {
-            window.location.href = `https://wa.me/+5493812093646?text=${encodedMessage}`;
-        }, 2000);
-    })
-    .catch(error => {
-        console.error('Error al enviar los datos:', error);
+            // Esperar 2 segundos y luego redirigir a WhatsApp en la misma pestaña
+            setTimeout(function () {
+                window.location.href = `https://wa.me/+5493812093646?text=${encodedMessage}`;
+            }, 2000);
+        })
+        .catch(error => {
+            console.error('Error al enviar los datos:', error);
 
-        // Mostrar mensaje de error
-        const errorMessage = document.getElementById('error-message');
-        const successMessage = document.getElementById('success-message');
+            // Mostrar mensaje de error
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
 
-        if (errorMessage) errorMessage.style.display = 'flex';
-        if (successMessage) successMessage.style.display = 'none';
+            if (errorMessage) errorMessage.style.display = 'flex';
+            if (successMessage) successMessage.style.display = 'none';
 
-        // Habilitar el botón nuevamente
-        confirmButton.disabled = false;
-        confirmButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.72.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 1.856.001 3.598.723 4.907 2.034 1.31 1.311 2.031 3.054 2.03 4.908-.001 3.825-3.113 6.938-6.937 6.938z"/></svg> Confirmar y contactar por WhatsApp';
+            // Habilitar el botón nuevamente
+            confirmButton.disabled = false;
+            confirmButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.72.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 1.856.001 3.598.723 4.907 2.034 1.31 1.311 2.031 3.054 2.03 4.908-.001 3.825-3.113 6.938-6.937 6.938z"/></svg> Confirmar y contactar por WhatsApp';
 
-        // Esperar 3 segundos y luego redirigir a WhatsApp de todos modos
-        setTimeout(function() {
-            window.open(`https://wa.me/+${CONFIG && CONFIG.clinic ? CONFIG.clinic.whatsapp : '5493812093646'}?text=${encodedMessage}`, '_blank');
-        }, 3000);
-    });
+            // Esperar 3 segundos y luego redirigir a WhatsApp de todos modos
+            setTimeout(function () {
+                window.open(`https://wa.me/+${CONFIG && CONFIG.clinic ? CONFIG.clinic.whatsapp : '5493812093646'}?text=${encodedMessage}`, '_blank');
+            }, 3000);
+        });
 }
 
 // Función para mostrar la página de confirmación - DESACTIVADA (reemplazada por la nueva implementación)
@@ -374,13 +374,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (paymentNote && CONFIG.clinic && CONFIG.clinic.depositAmount) {
                     const paymentText = document.querySelector('.payment-note p:first-child');
                     if (paymentText) {
-                        paymentText.innerHTML = `Para confirmar tu cita es <strong>obligatorio</strong> realizar un pago anticipado de $${CONFIG.clinic.depositAmount}.`;
+                        paymentText.innerHTML = `Para confirmar tu cita es <strong>obligatorio</strong> realizar un pago anticipado de $${CONFIG.clinic.depositAmount} (50%).`;
                     }
 
                     // Actualizar el texto del descuento
                     const discountText = document.querySelector('.payment-note p:last-child');
                     if (discountText && valoracionTreatment.initialPrice) {
-                        discountText.textContent = `Este pago se descuenta del costo total de la valoración ($${valoracionTreatment.initialPrice}).`;
+                        discountText.innerHTML = `El 50% restante ($${CONFIG.clinic.depositAmount}) se abona el día de la visita en la clínica.`;
                     }
 
                     // Actualizar cualquier otra referencia al precio de valoración que pueda existir
@@ -1338,10 +1338,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             }, 50);
                         }, 300);
                     } else {
-                         // Actualizar el estado de carga
-                         availabilityDataLoaded = true;
-                         // Load dates and times into the form
-                         loadAvailableDates();
+                        // Actualizar el estado de carga
+                        availabilityDataLoaded = true;
+                        // Load dates and times into the form
+                        loadAvailableDates();
                     }
                 });
             } else {
@@ -1457,7 +1457,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Hubo un problema al cargar las fechas disponibles. Por favor, intenta nuevamente.');
             }
             return false;
-console.log('loadAvailableDates() called');
+            console.log('loadAvailableDates() called');
         }
     }
 
@@ -1551,7 +1551,7 @@ console.log('loadAvailableDates() called');
                 dateOption.textContent = date;
 
                 // Agregar evento click para seleccionar la fecha
-                dateOption.addEventListener('click', function() {
+                dateOption.addEventListener('click', function () {
                     // Quitar la clase selected de todas las fechas
                     document.querySelectorAll('.date-option').forEach(opt => {
                         opt.classList.remove('selected');
@@ -1749,7 +1749,7 @@ console.log('loadAvailableDates() called');
                 timeOption.textContent = formattedTime; // Mostrar en formato 12h
 
                 // Agregar evento click para seleccionar la hora
-                timeOption.addEventListener('click', function() {
+                timeOption.addEventListener('click', function () {
                     // Quitar la clase selected de todas las horas
                     document.querySelectorAll('.time-option').forEach(opt => {
                         opt.classList.remove('selected');
@@ -1855,7 +1855,7 @@ console.log('loadAvailableDates() called');
     const whatsappValidation = document.getElementById('whatsapp-validation');
 
     // Validar el número de WhatsApp en tiempo real
-    whatsappInput.addEventListener('input', function() {
+    whatsappInput.addEventListener('input', function () {
         // Limpiar el mensaje de validación cuando el usuario escribe
         whatsappValidation.textContent = '';
         whatsappValidation.className = 'validation-message';
@@ -1873,7 +1873,7 @@ console.log('loadAvailableDates() called');
     });
 
     // Validar el número de WhatsApp cuando el usuario termina de escribir
-    whatsappInput.addEventListener('blur', function() {
+    whatsappInput.addEventListener('blur', function () {
         const whatsappNumber = this.value.trim();
 
         // Si el campo está vacío, no validar
@@ -1927,49 +1927,67 @@ console.log('loadAvailableDates() called');
             },
             body: JSON.stringify(validationData)
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('API Response:', data);
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Response:', data);
 
-            if (data && typeof data.exists === 'boolean') {
-                if (data.exists === true) {
-                    // El número existe en WhatsApp
-                    whatsappValidation.textContent = 'Número de WhatsApp válido';
-                    whatsappValidation.className = 'validation-message success';
+                if (data && typeof data.exists === 'boolean') {
+                    if (data.exists === true) {
+                        // El número existe en WhatsApp
+                        whatsappValidation.textContent = 'Número de WhatsApp válido';
+                        whatsappValidation.className = 'validation-message success';
 
-                    // Actualizar el estado del botón y el mensaje
-                    const finishButton = document.getElementById('finish-button');
-                    const buttonStatusMessage = document.getElementById('button-status-message');
-                    const paymentConfirmationCheckbox = document.getElementById('payment-confirmation-checkbox');
-                    const checkboxChecked = paymentConfirmationCheckbox && paymentConfirmationCheckbox.checked;
+                        // Actualizar el estado del botón y el mensaje
+                        const finishButton = document.getElementById('finish-button');
+                        const buttonStatusMessage = document.getElementById('button-status-message');
+                        const paymentConfirmationCheckbox = document.getElementById('payment-confirmation-checkbox');
+                        const checkboxChecked = paymentConfirmationCheckbox && paymentConfirmationCheckbox.checked;
 
-                    if (finishButton) {
-                        // Habilitar el botón solo si el WhatsApp es válido Y el checkbox está marcado
-                        finishButton.disabled = !checkboxChecked;
+                        if (finishButton) {
+                            // Habilitar el botón solo si el WhatsApp es válido Y el checkbox está marcado
+                            finishButton.disabled = !checkboxChecked;
 
-                        if (!checkboxChecked) {
-                            // Si el checkbox no está marcado, mostrar mensaje apropiado
-                            if (buttonStatusMessage) {
-                                buttonStatusMessage.textContent = 'Debes confirmar que entiendes la política de pago';
-                                buttonStatusMessage.className = 'button-status-message';
+                            if (!checkboxChecked) {
+                                // Si el checkbox no está marcado, mostrar mensaje apropiado
+                                if (buttonStatusMessage) {
+                                    buttonStatusMessage.textContent = 'Debes confirmar que entiendes la política de pago';
+                                    buttonStatusMessage.className = 'button-status-message';
+                                }
+                            } else {
+                                // Si el checkbox está marcado y el WhatsApp es válido
+                                if (buttonStatusMessage) {
+                                    buttonStatusMessage.textContent = 'Todo listo para continuar';
+                                    buttonStatusMessage.className = 'button-status-message success';
+                                }
                             }
                         } else {
-                            // Si el checkbox está marcado y el WhatsApp es válido
+                            // Si no hay botón de finalizar, actualizar solo el mensaje de validación
                             if (buttonStatusMessage) {
-                                buttonStatusMessage.textContent = 'Todo listo para continuar';
+                                buttonStatusMessage.textContent = 'Número de WhatsApp válido';
                                 buttonStatusMessage.className = 'button-status-message success';
                             }
                         }
                     } else {
-                        // Si no hay botón de finalizar, actualizar solo el mensaje de validación
+                        // El número no existe en WhatsApp
+                        whatsappValidation.textContent = 'Este número no tiene WhatsApp activo';
+                        whatsappValidation.className = 'validation-message error';
+
+                        // Deshabilitar el botón y actualizar el mensaje
+                        const finishButton = document.getElementById('finish-button');
+                        const buttonStatusMessage = document.getElementById('button-status-message');
+
+                        if (finishButton) {
+                            finishButton.disabled = true;
+                        }
+
                         if (buttonStatusMessage) {
-                            buttonStatusMessage.textContent = 'Número de WhatsApp válido';
-                            buttonStatusMessage.className = 'button-status-message success';
+                            buttonStatusMessage.textContent = 'Número de WhatsApp inválido';
+                            buttonStatusMessage.className = 'button-status-message error';
                         }
                     }
                 } else {
-                    // El número no existe en WhatsApp
-                    whatsappValidation.textContent = 'Este número no tiene WhatsApp activo';
+                    // Respuesta inesperada de la API
+                    whatsappValidation.textContent = 'No se pudo verificar el número';
                     whatsappValidation.className = 'validation-message error';
 
                     // Deshabilitar el botón y actualizar el mensaje
@@ -1981,13 +1999,14 @@ console.log('loadAvailableDates() called');
                     }
 
                     if (buttonStatusMessage) {
-                        buttonStatusMessage.textContent = 'Número de WhatsApp inválido';
+                        buttonStatusMessage.textContent = 'No se pudo verificar el número de WhatsApp';
                         buttonStatusMessage.className = 'button-status-message error';
                     }
                 }
-            } else {
-                // Respuesta inesperada de la API
-                whatsappValidation.textContent = 'No se pudo verificar el número';
+            })
+            .catch(error => {
+                console.error('Error validando WhatsApp:', error);
+                whatsappValidation.textContent = 'Error al verificar el número';
                 whatsappValidation.className = 'validation-message error';
 
                 // Deshabilitar el botón y actualizar el mensaje
@@ -1999,29 +2018,10 @@ console.log('loadAvailableDates() called');
                 }
 
                 if (buttonStatusMessage) {
-                    buttonStatusMessage.textContent = 'No se pudo verificar el número de WhatsApp';
+                    buttonStatusMessage.textContent = 'Error al verificar el número de WhatsApp';
                     buttonStatusMessage.className = 'button-status-message error';
                 }
-            }
-        })
-        .catch(error => {
-            console.error('Error validando WhatsApp:', error);
-            whatsappValidation.textContent = 'Error al verificar el número';
-            whatsappValidation.className = 'validation-message error';
-
-            // Deshabilitar el botón y actualizar el mensaje
-            const finishButton = document.getElementById('finish-button');
-            const buttonStatusMessage = document.getElementById('button-status-message');
-
-            if (finishButton) {
-                finishButton.disabled = true;
-            }
-
-            if (buttonStatusMessage) {
-                buttonStatusMessage.textContent = 'Error al verificar el número de WhatsApp';
-                buttonStatusMessage.className = 'button-status-message error';
-            }
-        });
+            });
     });
 
     // Handle review button click
@@ -2029,7 +2029,7 @@ console.log('loadAvailableDates() called');
     console.log('DOM Elements cargados');
 
     // Función para mostrar la confirmación
-    window.showConfirmation = function() {
+    window.showConfirmation = function () {
         console.log('showConfirmation called');
 
         // Ya no es necesario validar el checkbox de pago anticipado porque se ha eliminado
@@ -2253,7 +2253,7 @@ console.log('loadAvailableDates() called');
     // Manejar el checkbox de confirmación de pago
     const paymentConfirmationCheckbox = document.getElementById('payment-confirmation-checkbox');
     if (paymentConfirmationCheckbox) {
-        paymentConfirmationCheckbox.addEventListener('change', function() {
+        paymentConfirmationCheckbox.addEventListener('change', function () {
             // Obtener el botón de finalizar
             const finishButton = document.getElementById('finish-button');
             const buttonStatusMessage = document.getElementById('button-status-message');
@@ -2294,183 +2294,213 @@ console.log('loadAvailableDates() called');
         finishButtonElement.disabled = true;
 
         finishButtonElement.addEventListener('click', () => {
-        console.log('Finish button clicked');
+            console.log('Finish button clicked');
 
-        // Tracking: Finalización del proceso
-        if (typeof fbq !== 'undefined') {
-            const pasoNum = questions.length + 5;
-            const eventName = `Paso${pasoNum}_Finalizacion`;
-            console.log(`Tracking: ${eventName}`);
-            fbq('trackCustom', eventName, {
-                event_category: 'Form',
-                event_label: 'Finalización del proceso',
-                qualified: determineQualification()
+            // Tracking: Finalización del proceso
+            if (typeof fbq !== 'undefined') {
+                const pasoNum = questions.length + 5;
+                const eventName = `Paso${pasoNum}_Finalizacion`;
+                console.log(`Tracking: ${eventName}`);
+                fbq('trackCustom', eventName, {
+                    event_category: 'Form',
+                    event_label: 'Finalización del proceso',
+                    qualified: determineQualification()
+                });
+            }
+
+            // Obtener los datos para el mensaje de WhatsApp y para enviar al endpoint
+            const fullname = document.getElementById('fullname').value;
+            const whatsapp = document.getElementById('whatsapp').value;
+            let preferredDate = document.getElementById('preferred-date').value;
+            let preferredTime = document.getElementById('preferred-time').value;
+            const mainDoubt = document.getElementById('main_doubt').value || '';
+
+            // Recopilar respuestas del cuestionario para el landingUrl
+            const questionnaire = {};
+            for (const key in answers) {
+                if (answers.hasOwnProperty(key)) {
+                    questionnaire[key] = answers[key].value;
+                }
+            }
+
+            // Preparar las respuestas en el formato correcto
+            let respuestasTexto = '';
+            questions.forEach(question => {
+                if (answers[question.key]) {
+                    respuestasTexto += `${question.question}: ${answers[question.key].value}\n`;
+                }
             });
-        }
 
-        // Obtener los datos para el mensaje de WhatsApp y para enviar al endpoint
-        const fullname = document.getElementById('fullname').value;
-        const whatsapp = document.getElementById('whatsapp').value;
-        let preferredDate = document.getElementById('preferred-date').value;
-        let preferredTime = document.getElementById('preferred-time').value;
-        const mainDoubt = document.getElementById('main_doubt').value || '';
-
-        // Recopilar respuestas del cuestionario para el landingUrl
-        const questionnaire = {};
-        for (const key in answers) {
-            if (answers.hasOwnProperty(key)) {
-                questionnaire[key] = answers[key].value;
+            // Agregar la duda principal a las respuestas si existe
+            if (mainDoubt && mainDoubt.trim() !== '') {
+                respuestasTexto += `¿Cuál es tu principal duda sobre el procedimiento?: ${mainDoubt}\n`;
             }
-        }
 
-        // Preparar las respuestas en el formato correcto
-        let respuestasTexto = '';
-        questions.forEach(question => {
-            if (answers[question.key]) {
-                respuestasTexto += `${question.question}: ${answers[question.key].value}\n`;
+            // Preparar datos completos para el webhook
+            const formData = {
+                fullname: fullname,
+                whatsapp: whatsapp,
+                tratamiento_interes: answers.procedure ? answers.procedure.value : 'Cirugía plástica',
+                fecha_cita: `${preferredDate} ${preferredTime}`,
+                fecha: preferredDate,
+                hora: preferredTime,
+                landingUrl: window.location.href,
+                respuestas: respuestasTexto,
+                respuestas_detalladas: {},
+                videollamada_previa: answers.videocall ? (answers.videocall.value.includes('Sí') ? 'Sí' : 'No') : 'No',
+                peso: answers.weight ? answers.weight.value : '',
+                altura: answers.height ? answers.height.value : '',
+                duda_principal: mainDoubt,
+                estado: "NUEVO",
+                origen: "Landing Dra. Constanza Bossi"
+            };
+
+            // Agregar todas las respuestas individuales
+            questions.forEach(question => {
+                if (answers[question.key]) {
+                    formData.respuestas_detalladas[question.key] = answers[question.key].value;
+                }
+            });
+
+            // Validar que los campos de nombre y WhatsApp estén completos
+            if (!fullname || !whatsapp) {
+                alert('Por favor completa tu nombre y número de WhatsApp.');
+                return;
             }
-        });
 
-        // Agregar la duda principal a las respuestas si existe
-        if (mainDoubt && mainDoubt.trim() !== '') {
-            respuestasTexto += `¿Cuál es tu principal duda sobre el procedimiento?: ${mainDoubt}\n`;
-        }
+            // Asignar valores predeterminados a fecha y hora si están vacíos
+            const defaultDate = "Próxima disponible";
+            const defaultTime = "A coordinar";
 
-        // Preparar datos completos para el webhook
-        const formData = {
-            fullname: fullname,
-            whatsapp: whatsapp,
-            tratamiento_interes: answers.procedure ? answers.procedure.value : 'Cirugía plástica',
-            fecha_cita: `${preferredDate} ${preferredTime}`,
-            fecha: preferredDate,
-            hora: preferredTime,
-            landingUrl: window.location.href,
-            respuestas: respuestasTexto,
-            respuestas_detalladas: {},
-            videollamada_previa: answers.videocall ? (answers.videocall.value.includes('Sí') ? 'Sí' : 'No') : 'No',
-            peso: answers.weight ? answers.weight.value : '',
-            altura: answers.height ? answers.height.value : '',
-            duda_principal: mainDoubt,
-            estado: "NUEVO",
-            origen: "Landing Dra. Constanza Bossi"
-        };
-
-        // Agregar todas las respuestas individuales
-        questions.forEach(question => {
-            if (answers[question.key]) {
-                formData.respuestas_detalladas[question.key] = answers[question.key].value;
+            if (!preferredDate) {
+                console.log('Fecha no seleccionada, usando valor predeterminado');
+                preferredDate = defaultDate;
             }
-        });
 
-        // Validar que los campos de nombre y WhatsApp estén completos
-        if (!fullname || !whatsapp) {
-            alert('Por favor completa tu nombre y número de WhatsApp.');
-            return;
-        }
+            if (!preferredTime) {
+                console.log('Hora no seleccionada, usando valor predeterminado');
+                preferredTime = defaultTime;
+            }
 
-        // Asignar valores predeterminados a fecha y hora si están vacíos
-        const defaultDate = "Próxima disponible";
-        const defaultTime = "A coordinar";
+            // Validar que el número de WhatsApp tenga al menos 10 dígitos
+            const whatsappDigits = whatsapp.replace(/\D/g, '');
+            if (whatsappDigits.length < 10 || whatsappDigits.length > 15) {
+                alert('Por favor ingresa un número de WhatsApp válido (al menos 10 dígitos).');
+                document.getElementById('whatsapp').focus();
+                return;
+            }
 
-        if (!preferredDate) {
-            console.log('Fecha no seleccionada, usando valor predeterminado');
-            preferredDate = defaultDate;
-        }
-
-        if (!preferredTime) {
-            console.log('Hora no seleccionada, usando valor predeterminado');
-            preferredTime = defaultTime;
-        }
-
-        // Validar que el número de WhatsApp tenga al menos 10 dígitos
-        const whatsappDigits = whatsapp.replace(/\D/g, '');
-        if (whatsappDigits.length < 10 || whatsappDigits.length > 15) {
-            alert('Por favor ingresa un número de WhatsApp válido (al menos 10 dígitos).');
-            document.getElementById('whatsapp').focus();
-            return;
-        }
-
-        // Crear y mostrar el overlay de carga
-        const overlay = document.createElement('div');
-        overlay.className = 'mercadopago-overlay';
-        overlay.innerHTML = `
+            // Crear y mostrar el overlay de carga
+            const overlay = document.createElement('div');
+            overlay.className = 'mercadopago-overlay';
+            overlay.innerHTML = `
             <div class="mercadopago-spinner"></div>
             <p>Generando link de pago personalizado...</p>
             <p>Por favor espera, serás redirigido a Mercado Pago en unos segundos.</p>
         `;
-        document.body.appendChild(overlay);
+            document.body.appendChild(overlay);
 
-        // Deshabilitar el botón para evitar múltiples envíos
-        const finishButton = document.getElementById('finish-button');
-        finishButton.disabled = true;
-        finishButton.innerHTML = '<span class="loading-spinner"></span> Procesando...';
+            // Deshabilitar el botón para evitar múltiples envíos
+            const finishButton = document.getElementById('finish-button');
+            finishButton.disabled = true;
+            finishButton.innerHTML = '<span class="loading-spinner"></span> Procesando...';
 
-        // Primero, obtener el link de pago de Mercado Pago
-        fetch('https://sswebhookss.odontolab.co/webhook/c0cb515e-caf1-424f-b67c-84c022d90eae', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify([
-                {
-                    "cliente": "bossi",
-                    "paciente": fullname,
-                    "telefono": whatsapp.replace(/\D/g, ''),
-                    "whatsapp_cliente": "5493812093646"
-                }
-            ])
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Respuesta del servidor de Mercado Pago:", data);
+            // Primero, obtener el link de pago de Mercado Pago
+            fetch('https://sswebhookss.odontolab.co/webhook/c0cb515e-caf1-424f-b67c-84c022d90eae', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify([
+                    {
+                        "cliente": "bossi",
+                        "paciente": fullname,
+                        "telefono": whatsapp.replace(/\D/g, ''),
+                        "whatsapp_cliente": "5493812093646"
+                    }
+                ])
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Respuesta del servidor de Mercado Pago:", data);
 
-            // Extraer el link de Mercado Pago de la respuesta (maneja diferentes formatos)
-            let mercadoPagoLink = null;
+                    // Extraer el link de Mercado Pago de la respuesta (maneja diferentes formatos)
+                    let mercadoPagoLink = null;
 
-            // Si la respuesta es un array, buscar en el primer elemento
-            if (Array.isArray(data) && data.length > 0 && data[0].mercadopago_linkpersonalizado_creado) {
-                mercadoPagoLink = data[0].mercadopago_linkpersonalizado_creado;
-            }
-            // Si la respuesta es un objeto directo, buscar la propiedad directamente
-            else if (data && data.mercadopago_linkpersonalizado_creado) {
-                mercadoPagoLink = data.mercadopago_linkpersonalizado_creado;
-            }
-
-            // Verificar si se encontró el link de Mercado Pago
-            if (mercadoPagoLink) {
-
-                // Agregar el link de Mercado Pago a los datos del formulario
-                formData.mercadopago_link = mercadoPagoLink;
-
-                // Enviar datos al endpoint usando jQuery AJAX
-                const targetUrl = CONFIG && CONFIG.webhooks ? CONFIG.webhooks.formSubmission : "https://sswebhookss.odontolab.co/webhook/0dc8f34f-0992-419f-a841-b3782f2556a5";
-
-                jQuery.ajax({
-                    url: targetUrl,
-                    data: JSON.stringify(formData),
-                    type: "POST",
-                    contentType: "application/json",
-                    dataType: "json"
-                })
-                .done(function(response) {
-                    console.log("Respuesta del servidor de guardado de datos:", response);
-
-                    // Disparar evento CitaFiltro explícitamente
-                    if (typeof fbq !== 'undefined') {
-                        console.log('Disparando evento CitaFiltro en Facebook Pixel ANTES de redireccionar');
-                        fbq('trackCustom', 'CitaFiltro', {
-                            fullname: fullname,
-                            whatsapp: whatsapp,
-                            fecha_cita: `${preferredDate} ${preferredTime}`,
-                            tratamiento: 'Cirugía plástica'
-                        });
+                    // Si la respuesta es un array, buscar en el primer elemento
+                    if (Array.isArray(data) && data.length > 0 && data[0].mercadopago_linkpersonalizado_creado) {
+                        mercadoPagoLink = data[0].mercadopago_linkpersonalizado_creado;
+                    }
+                    // Si la respuesta es un objeto directo, buscar la propiedad directamente
+                    else if (data && data.mercadopago_linkpersonalizado_creado) {
+                        mercadoPagoLink = data.mercadopago_linkpersonalizado_creado;
                     }
 
-                    // Redirigir al usuario al link de Mercado Pago
-                    window.location.href = mercadoPagoLink;
+                    // Verificar si se encontró el link de Mercado Pago
+                    if (mercadoPagoLink) {
+
+                        // Agregar el link de Mercado Pago a los datos del formulario
+                        formData.mercadopago_link = mercadoPagoLink;
+
+                        // Enviar datos al endpoint usando jQuery AJAX
+                        const targetUrl = CONFIG && CONFIG.webhooks ? CONFIG.webhooks.formSubmission : "https://sswebhookss.odontolab.co/webhook/0dc8f34f-0992-419f-a841-b3782f2556a5";
+
+                        jQuery.ajax({
+                            url: targetUrl,
+                            data: JSON.stringify(formData),
+                            type: "POST",
+                            contentType: "application/json",
+                            dataType: "json"
+                        })
+                            .done(function (response) {
+                                console.log("Respuesta del servidor de guardado de datos:", response);
+
+                                // Disparar evento CitaFiltro explícitamente
+                                if (typeof fbq !== 'undefined') {
+                                    console.log('Disparando evento CitaFiltro en Facebook Pixel ANTES de redireccionar');
+                                    fbq('trackCustom', 'CitaFiltro', {
+                                        fullname: fullname,
+                                        whatsapp: whatsapp,
+                                        fecha_cita: `${preferredDate} ${preferredTime}`,
+                                        tratamiento: 'Cirugía plástica'
+                                    });
+                                }
+
+                                // Redirigir al usuario al link de Mercado Pago
+                                window.location.href = mercadoPagoLink;
+                            })
+                            .fail(function (error) {
+                                console.error('Error al enviar los datos:', error);
+
+                                // Remover el overlay
+                                if (overlay && overlay.parentNode) {
+                                    overlay.parentNode.removeChild(overlay);
+                                }
+
+                                // Restaurar el botón
+                                finishButton.disabled = false;
+                                finishButton.innerHTML = 'Finalizar →';
+
+                                alert('Hubo un error al guardar los datos. Por favor, inténtalo de nuevo.');
+                            });
+                    } else {
+                        console.error('No se recibió un link de Mercado Pago válido:', data);
+                        console.log('Formato de respuesta no reconocido o falta la propiedad mercadopago_linkpersonalizado_creado');
+
+                        // Remover el overlay
+                        if (overlay && overlay.parentNode) {
+                            overlay.parentNode.removeChild(overlay);
+                        }
+
+                        // Restaurar el botón
+                        finishButton.disabled = false;
+                        finishButton.innerHTML = 'Finalizar →';
+
+                        alert('Hubo un error al generar el link de pago. Por favor, inténtalo de nuevo.');
+                    }
                 })
-                .fail(function(error) {
-                    console.error('Error al enviar los datos:', error);
+                .catch(error => {
+                    console.error('Error al obtener el link de Mercado Pago:', error);
 
                     // Remover el overlay
                     if (overlay && overlay.parentNode) {
@@ -2481,38 +2511,8 @@ console.log('loadAvailableDates() called');
                     finishButton.disabled = false;
                     finishButton.innerHTML = 'Finalizar →';
 
-                    alert('Hubo un error al guardar los datos. Por favor, inténtalo de nuevo.');
+                    alert('Hubo un error al conectar con el servidor de pagos. Por favor, inténtalo de nuevo.');
                 });
-            } else {
-                console.error('No se recibió un link de Mercado Pago válido:', data);
-                console.log('Formato de respuesta no reconocido o falta la propiedad mercadopago_linkpersonalizado_creado');
-
-                // Remover el overlay
-                if (overlay && overlay.parentNode) {
-                    overlay.parentNode.removeChild(overlay);
-                }
-
-                // Restaurar el botón
-                finishButton.disabled = false;
-                finishButton.innerHTML = 'Finalizar →';
-
-                alert('Hubo un error al generar el link de pago. Por favor, inténtalo de nuevo.');
-            }
-        })
-        .catch(error => {
-            console.error('Error al obtener el link de Mercado Pago:', error);
-
-            // Remover el overlay
-            if (overlay && overlay.parentNode) {
-                overlay.parentNode.removeChild(overlay);
-            }
-
-            // Restaurar el botón
-            finishButton.disabled = false;
-            finishButton.innerHTML = 'Finalizar →';
-
-            alert('Hubo un error al conectar con el servidor de pagos. Por favor, inténtalo de nuevo.');
         });
-    });
     }
 });
