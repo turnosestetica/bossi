@@ -30,6 +30,11 @@ function detectClientConfig() {
 // Obtener la configuración del cliente actual
 const CONFIG = detectClientConfig();
 
+function formatPrice(value) {
+    const amount = Number(value);
+    return Number.isFinite(amount) ? amount.toLocaleString('es-AR') : '';
+}
+
 // Depuración: Mostrar la configuración detectada
 console.log('Configuración detectada:', CONFIG);
 console.log('Configuración completa:', CLIENTS_CONFIG);
@@ -131,8 +136,9 @@ window.submitForm = function () {
     message += `- Fecha: ${formattedDate}\n`;
     message += `- Hora: ${preferredTime}\n\n`;
     message += `*ENTIENDO QUE:*\n`;
-    message += `- Se requiere un pago anticipado de $14.000 (50%) para confirmar mi cita\n`;
-    message += `- El 50% restante ($14.000) lo abonaré el día de la consulta en la clínica\n\n`;
+    const formattedDepositAmount = formatPrice(CONFIG && CONFIG.clinic ? CONFIG.clinic.depositAmount : 0);
+    message += `- Se requiere un pago anticipado de $${formattedDepositAmount} (50%) para confirmar mi cita\n`;
+    message += `- El 50% restante ($${formattedDepositAmount}) lo abonaré el día de la consulta en la clínica\n\n`;
     message += `*RESPUESTAS DEL CUESTIONARIO*\n`;
 
     // Agregar respuestas del cuestionario al mensaje
@@ -360,13 +366,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Actualizar el precio de valoración
                 const valoracionPrice = document.querySelector('.valoracion-row .price-value');
                 if (valoracionPrice) {
-                    valoracionPrice.textContent = `$${valoracionTreatment.initialPrice}`;
+                    const consultationPrice = valoracionTreatment.regularPrice || (CONFIG && CONFIG.clinic ? CONFIG.clinic.consultationPrice : 0) || valoracionTreatment.initialPrice;
+                    valoracionPrice.textContent = `$${formatPrice(consultationPrice)}`;
                 }
 
                 // Actualizar el precio de anticipo
                 const anticipoPrice = document.querySelector('.valoracion-detail .price-value');
                 if (anticipoPrice && CONFIG.clinic && CONFIG.clinic.depositAmount) {
-                    anticipoPrice.textContent = `$${CONFIG.clinic.depositAmount}`;
+                    anticipoPrice.textContent = `$${formatPrice(CONFIG.clinic.depositAmount)}`;
                 }
 
                 // Actualizar el texto del pago anticipado
@@ -374,13 +381,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (paymentNote && CONFIG.clinic && CONFIG.clinic.depositAmount) {
                     const paymentText = document.querySelector('.payment-note p:first-child');
                     if (paymentText) {
-                        paymentText.innerHTML = `Para confirmar tu cita es <strong>obligatorio</strong> realizar un pago anticipado de $${CONFIG.clinic.depositAmount} (50%).`;
+                        paymentText.innerHTML = `Para confirmar tu cita es <strong>obligatorio</strong> realizar un pago anticipado de $${formatPrice(CONFIG.clinic.depositAmount)} (50%).`;
                     }
 
                     // Actualizar el texto del descuento
                     const discountText = document.querySelector('.payment-note p:last-child');
                     if (discountText && valoracionTreatment.initialPrice) {
-                        discountText.innerHTML = `El 50% restante ($${CONFIG.clinic.depositAmount}) se abona el día de la visita en la clínica.`;
+                        discountText.innerHTML = `El 50% restante ($${formatPrice(CONFIG.clinic.depositAmount)}) se abona el día de la visita en la clínica.`;
                     }
 
                     // Actualizar cualquier otra referencia al precio de valoración que pueda existir
@@ -401,11 +408,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Actualizar el texto en la sección de recordatorio de pago
                 if (CONFIG.clinic && CONFIG.clinic.depositAmount) {
-                    const paymentReminder = document.querySelector('.payment-reminder p:first-child strong');
+                    const paymentReminder = document.querySelector('.payment-reminder p:first-child');
                     if (paymentReminder) {
                         const reminderText = document.querySelector('.payment-reminder p:first-child');
                         if (reminderText) {
-                            reminderText.innerHTML = `<strong>IMPORTANTE:</strong> Se requiere un depósito de $${CONFIG.clinic.depositAmount} MXN para asegurar tu asistencia y confirmar tu cita de valoración.`;
+                            reminderText.innerHTML = `<strong>IMPORTANTE:</strong> Se requiere un depósito de $${formatPrice(CONFIG.clinic.depositAmount)} para asegurar tu asistencia y confirmar tu cita de valoración.`;
                         }
                     }
                 }
@@ -442,7 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Reemplazar el monto del depósito si está disponible
             if (CONFIG.clinic && CONFIG.clinic.depositAmount) {
-                depositInfoContent = depositInfoContent.replace(/\$400|\$[0-9]+/g, '$' + CONFIG.clinic.depositAmount);
+                depositInfoContent = depositInfoContent.replace(/\$[\d.]+/g, '$' + formatPrice(CONFIG.clinic.depositAmount));
             }
 
             depositInfoText.innerHTML = depositInfoContent;
@@ -913,7 +920,7 @@ document.addEventListener('DOMContentLoaded', () => {
         evaluationCard.className = 'price-card';
         evaluationCard.innerHTML = `
             <div class="price-title">Consulta de Evaluación</div>
-            <div class="price-amount">$28.000</div>
+            <div class="price-amount">$${formatPrice(CONFIG && CONFIG.clinic ? CONFIG.clinic.consultationPrice : 0)}</div>
             <div class="price-note">Pago anticipado obligatorio para confirmar</div>
         `;
         priceGrid.appendChild(evaluationCard);
@@ -1340,8 +1347,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         // Actualizar el estado de carga
                         availabilityDataLoaded = true;
-                        // Load dates and times into the form
-                        loadAvailableDates();
                     }
                 });
             } else {
@@ -1355,9 +1360,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Restore the button to its original state
                 appointmentButton.disabled = false;
                 appointmentButton.innerHTML = 'Ver disponibilidad';
-
-                // Load dates and times into the form
-                loadAvailableDates();
             }
         }, 300);
     });
@@ -1416,8 +1418,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     availabilityData = {};
                 }
             } else if (typeof responseData === 'object') {
-                console.log('La respuesta es un objeto. Usando directamente...');
-                availabilityData = responseData;
+                console.log('La respuesta es un objeto. Verificando formato...');
+                if (responseData.turnos && Array.isArray(responseData.turnos)) {
+                    console.log('Formato detectado: objeto con propiedad turnos (array)');
+                    availabilityData = {};
+                    responseData.turnos.forEach(turno => {
+                        if (turno.fecha && turno.hora_inicio) {
+                            if (!availabilityData[turno.fecha]) {
+                                availabilityData[turno.fecha] = [];
+                            }
+                            availabilityData[turno.fecha].push(turno.hora_inicio);
+                        }
+                    });
+                } else {
+                    console.log('La respuesta es un objeto. Usando directamente...');
+                    availabilityData = responseData;
+                }
             } else {
                 console.log('Formato de respuesta no reconocido. Creando objeto vacío.');
                 availabilityData = {};
