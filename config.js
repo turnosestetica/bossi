@@ -13,8 +13,8 @@ const CLIENTS_CONFIG = {
       address: "Santiago del Estero 60, Piso 6, Edificio EMSA, Tucumán",
       whatsapp: "5493812093646", // Sin el signo +
       whatsappDisplay: "381-209-3646",
-      depositAmount: 14000,
-      consultationPrice: 28000,
+      depositAmount: 17500,
+      consultationPrice: 35000,
     },
 
     // Configuración de la landing page
