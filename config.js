@@ -131,8 +131,8 @@ const CLIENTS_CONFIG = {
     treatments: [
       {
         name: "Consulta de Evaluación",
-        initialPrice: 14000,
-        regularPrice: 28000,
+        initialPrice: 17500,
+        regularPrice: 35000,
         monthlyFee: null,
         isOffer: true,
         highlightText: "$14.000 (Reserva 50%)",
