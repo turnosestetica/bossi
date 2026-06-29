@@ -140,46 +140,46 @@ const CLIENTS_CONFIG = {
       },
       {
         name: "Lipoescultura",
-        initialPrice: 4200000,
+        initialPrice: 4800000,
         monthlyFee: null,
         priceFormat: "simple"
       },
       {
         name: "Lipoabdominoplastia",
-        initialPrice: 4600000,
+        initialPrice: 5300000 ,
         monthlyFee: null,
         priceFormat: "simple"
       },
       {
         name: "Aumento mamario",
-        initialPrice: 3000000,
+        initialPrice: 3700000,
         monthlyFee: null,
         priceFormat: "simple"
       },
       {
         name: "Remodelación costal",
-        initialPrice: 4600000,
+        initialPrice: 5300000,
         monthlyFee: null,
         priceFormat: "simple",
         customNote: "Sin asociación con otros procedimientos"
       },
       {
         name: "Toxina botulínica (Botox)",
-        initialPrice: 390000,
+        initialPrice: 430000,
         monthlyFee: null,
         priceFormat: "simple",
         customNote: "Para arrugas de expresión"
       },
       {
         name: "Ácido hialurónico",
-        initialPrice: 350000,
+        initialPrice: 400000,
         monthlyFee: null,
         priceFormat: "simple",
         customNote: "Precio desde. Varía según zonas a tratar"
       },
       {
         name: "Rinomodelación",
-        initialPrice: 400000,
+        initialPrice: 450000,
         monthlyFee: null,
         priceFormat: "simple",
         customNote: "Con ácido hialurónico"
