@@ -13,8 +13,8 @@ const CLIENTS_CONFIG = {
       address: "Santiago del Estero 60, Piso 6, Edificio EMSA, Tucumán",
       whatsapp: "5493812093646", // Sin el signo +
       whatsappDisplay: "381-209-3646",
-      depositAmount: 17500,
-      consultationPrice: 35000,
+      depositAmount: 20000,
+      consultationPrice: 40000,
     },
 
     // Configuración de la landing page
@@ -131,8 +131,8 @@ const CLIENTS_CONFIG = {
     treatments: [
       {
         name: "Consulta de Evaluación",
-        initialPrice: 17500,
-        regularPrice: 35000,
+        initialPrice: 20000,
+        regularPrice: 40000,
         monthlyFee: null,
         isOffer: true,
         highlightText: "$17.500 (Reserva 50%)",
