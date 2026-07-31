@@ -29,13 +29,13 @@ const CLIENTS_CONFIG = {
       priceNote: "Podrías ser candidato para un procedimiento de cirugía plástica. Para comprobarlo, solicita una cita de evaluación.",
       confirmationText: {
         saveAndRedirect: "Al dar clic en <strong>PAGAR CITA →</strong>, se guardarán los datos de tu cita y serás redireccionado a MercadoPago para pagar el 50% de tu cita. Sólo confirmamos citas con pago anticipado. Si no finalizas el pago tu cita se libera automáticamente.",
-        depositInfo: "Recuerda que se requiere el pago anticipado de $17.500 (50% de la cita) para confirmar tu turno. El 50% restante ($17.500) se abona el día de la visita en la clínica."
+        depositInfo: "Recuerda que se requiere el pago anticipado de $20.000 (50% de la cita) para confirmar tu turno. El 50% restante ($20.000) se abona el día de la visita en la clínica."
       },
       whatsappMessage: {
         greeting: "Hola, soy {nombre} y me interesa agendar una consulta con la Dra. Constanza Bossi.",
         contactInfo: "*DATOS DE CONTACTO*\n- Nombre: {nombre}\n- WhatsApp: {whatsapp}",
         appointmentInfo: "*CITA SOLICITADA*\n- Fecha: {fecha}\n- Hora: {hora}",
-        depositInfo: "*ENTIENDO QUE:*\n- Se requiere el pago anticipado de $17.500 (50%) para confirmar mi reserva.\n- El 50% restante ($17.500) lo abonaré el día de la cita en la clínica.",
+        depositInfo: "*ENTIENDO QUE:*\n- Se requiere el pago anticipado de $20.000 (50%) para confirmar mi reserva.\n- El 50% restante ($20.000) lo abonaré el día de la cita en la clínica.",
         questionnaireInfo: "*RESPUESTAS DEL CUESTIONARIO*\n{respuestas}",
         treatmentType: "cirugía plástica"
       }
@@ -135,7 +135,7 @@ const CLIENTS_CONFIG = {
         regularPrice: 40000,
         monthlyFee: null,
         isOffer: true,
-        highlightText: "$17.500 (Reserva 50%)",
+        highlightText: "$20.000 (Reserva 50%)",
         customNote: "El 50% restante se abona el día de la consulta"
       },
       {
