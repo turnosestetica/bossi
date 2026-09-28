@@ -128,7 +128,7 @@ const CLIENTS_CONFIG = {
     ],
 
     // Tratamientos y precios (ACTUALIZADOS)
-    treatments: [
+   treatments: [
       {
         name: "Consulta de Evaluación",
         initialPrice: 20000,
@@ -140,46 +140,53 @@ const CLIENTS_CONFIG = {
       },
       {
         name: "Lipoescultura",
-        initialPrice: 4800000,
+        initialPrice: 3800,
+        currency: "u$ ",
         monthlyFee: null,
         priceFormat: "simple"
       },
       {
         name: "Lipoabdominoplastia",
-        initialPrice: 5300000 ,
+        initialPrice: 4000,
+        currency: "u$ ",
         monthlyFee: null,
         priceFormat: "simple"
       },
       {
         name: "Aumento mamario",
-        initialPrice: 3700000,
+        initialPrice: 2800,
+        currency: "u$ ",
         monthlyFee: null,
         priceFormat: "simple"
       },
       {
         name: "Remodelación costal",
-        initialPrice: 5300000,
+        initialPrice: 4500,
+        currency: "u$ ",
         monthlyFee: null,
         priceFormat: "simple",
         customNote: "Sin asociación con otros procedimientos"
       },
       {
         name: "Toxina botulínica (Botox)",
-        initialPrice: 430000,
+        initialPrice: 320,
+        currency: "u$ ",
         monthlyFee: null,
         priceFormat: "simple",
         customNote: "Para arrugas de expresión"
       },
       {
         name: "Ácido hialurónico",
-        initialPrice: 400000,
+        initialPrice: 300,
+        currency: "u$ ",
         monthlyFee: null,
         priceFormat: "simple",
         customNote: "Precio desde. Varía según zonas a tratar"
       },
       {
         name: "Rinomodelación",
-        initialPrice: 450000,
+        initialPrice: 320,
+        currency: "u$ ",
         monthlyFee: null,
         priceFormat: "simple",
         customNote: "Con ácido hialurónico"
