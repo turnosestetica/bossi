@@ -975,9 +975,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const priceAmount = document.createElement('div');
             priceAmount.className = 'price-amount';
 
-            // Determinar el texto del precio
+        // Determinar el texto del precio
+            const currency = treatment.currency || '$';
             if (treatment.initialPrice) {
-                priceAmount.textContent = `$${treatment.initialPrice.toLocaleString()}`;
+                priceAmount.textContent = `${currency}${treatment.initialPrice}`;
                 if (treatment.isOffer) {
                     priceAmount.textContent += ' (Oferta!)';
                 }
