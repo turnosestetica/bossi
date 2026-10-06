@@ -136,9 +136,8 @@ window.submitForm = function () {
     message += `- Fecha: ${formattedDate}\n`;
     message += `- Hora: ${preferredTime}\n\n`;
     message += `*ENTIENDO QUE:*\n`;
-    const formattedDepositAmount = formatPrice(CONFIG && CONFIG.clinic ? CONFIG.clinic.depositAmount : 0);
-    message += `- Se requiere un pago anticipado de $${formattedDepositAmount} (50%) para confirmar mi cita\n`;
-    message += `- El 50% restante ($${formattedDepositAmount}) lo abonaré el día de la consulta en la clínica\n\n`;
+    const formattedTotalAmount = formatPrice(CONFIG && CONFIG.clinic ? CONFIG.clinic.consultationPrice : 40000);
+    message += `- Se requiere el pago total anticipado de $${formattedTotalAmount} para confirmar mi cita\n\n`;
     message += `*RESPUESTAS DEL CUESTIONARIO*\n`;
 
     // Agregar respuestas del cuestionario al mensaje
@@ -376,26 +375,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     anticipoPrice.textContent = `$${formatPrice(CONFIG.clinic.depositAmount)}`;
                 }
 
-                // Actualizar el texto del pago anticipado
-                const paymentNote = document.querySelector('.payment-note p:first-child strong');
-                if (paymentNote && CONFIG.clinic && CONFIG.clinic.depositAmount) {
-                    const paymentText = document.querySelector('.payment-note p:first-child');
-                    if (paymentText) {
-                        paymentText.innerHTML = `Para confirmar tu cita es <strong>obligatorio</strong> realizar un pago anticipado de $${formatPrice(CONFIG.clinic.depositAmount)} (50%).`;
-                    }
-
-                    // Actualizar el texto del descuento
-                    const discountText = document.querySelector('.payment-note p:last-child');
-                    if (discountText && valoracionTreatment.initialPrice) {
-                        discountText.innerHTML = `El 50% restante ($${formatPrice(CONFIG.clinic.depositAmount)}) se abona el día de la visita en la clínica.`;
-                    }
-
-                    // Actualizar cualquier otra referencia al precio de valoración que pueda existir
-                    document.querySelectorAll('.price-value, p').forEach(el => {
-                        if (el.textContent.includes('$800')) {
-                            el.textContent = el.textContent.replace('$800', `$${valoracionTreatment.initialPrice}`);
+               if (CONFIG.clinic && CONFIG.clinic.depositAmount) {
+                    const paymentReminder = document.querySelector('.payment-reminder p:first-child');
+                    if (paymentReminder) {
+                        const reminderText = document.querySelector('.payment-reminder p:first-child');
+                        if (reminderText) {
+                            reminderText.innerHTML = `<strong>IMPORTANTE:</strong> Se requiere un depósito de $${formatPrice(CONFIG.clinic.depositAmount)} para asegurar tu asistencia y confirmar tu cita de valoración.`;
                         }
-                    });
+                    }
                 }
 
                 // Actualizar el mensaje de valoración en la parte superior
@@ -407,12 +394,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Actualizar el texto en la sección de recordatorio de pago
-                if (CONFIG.clinic && CONFIG.clinic.depositAmount) {
+              if (CONFIG.clinic && CONFIG.clinic.consultationPrice) {
                     const paymentReminder = document.querySelector('.payment-reminder p:first-child');
                     if (paymentReminder) {
                         const reminderText = document.querySelector('.payment-reminder p:first-child');
                         if (reminderText) {
-                            reminderText.innerHTML = `<strong>IMPORTANTE:</strong> Se requiere un depósito de $${formatPrice(CONFIG.clinic.depositAmount)} para asegurar tu asistencia y confirmar tu cita de valoración.`;
+                            reminderText.innerHTML = `<strong>IMPORTANTE:</strong> Se requiere el pago total de $${formatPrice(CONFIG.clinic.consultationPrice)} para asegurar y confirmar tu cita de valoración.`;
                         }
                     }
                 }
