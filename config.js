@@ -13,7 +13,7 @@ const CLIENTS_CONFIG = {
       address: "Santiago del Estero 60, Piso 6, Edificio EMSA, Tucumán",
       whatsapp: "5493812093646", // Sin el signo +
       whatsappDisplay: "381-209-3646",
-      depositAmount: 20000,
+      depositAmount: 40000,
       consultationPrice: 40000,
     },
 
@@ -27,15 +27,15 @@ const CLIENTS_CONFIG = {
       qualificationMessage: "Basado en tus respuestas, eres un buen candidato para una consulta con la Dra. Constanza Bossi.",
       qualificationAction: "Agenda una consulta para recibir una evaluación personalizada.",
       priceNote: "Podrías ser candidato para un procedimiento de cirugía plástica. Para comprobarlo, solicita una cita de evaluación.",
-      confirmationText: {
-        saveAndRedirect: "Al dar clic en <strong>PAGAR CITA →</strong>, se guardarán los datos de tu cita y serás redireccionado a MercadoPago para pagar el 50% de tu cita. Sólo confirmamos citas con pago anticipado. Si no finalizas el pago tu cita se libera automáticamente.",
-        depositInfo: "Recuerda que se requiere el pago anticipado de $20.000 (50% de la cita) para confirmar tu turno. El 50% restante ($20.000) se abona el día de la visita en la clínica."
+    confirmationText: {
+        saveAndRedirect: "Al dar clic en <strong>PAGAR CITA →</strong>, se guardarán los datos de tu cita y serás redireccionado a MercadoPago para abonar el valor total de la consulta ($40.000). Sólo confirmamos citas con pago anticipado. Si no finalizas el pago tu cita se libera automáticamente.",
+        depositInfo: "Recuerda que se requiere el pago anticipado del total de la consulta ($40.000) para confirmar tu turno en la clínica."
       },
       whatsappMessage: {
         greeting: "Hola, soy {nombre} y me interesa agendar una consulta con la Dra. Constanza Bossi.",
         contactInfo: "*DATOS DE CONTACTO*\n- Nombre: {nombre}\n- WhatsApp: {whatsapp}",
         appointmentInfo: "*CITA SOLICITADA*\n- Fecha: {fecha}\n- Hora: {hora}",
-        depositInfo: "*ENTIENDO QUE:*\n- Se requiere el pago anticipado de $20.000 (50%) para confirmar mi reserva.\n- El 50% restante ($20.000) lo abonaré el día de la cita en la clínica.",
+        depositInfo: "*ENTIENDO QUE:*\n- Se requiere el pago anticipado del total de la consulta ($40.000) para confirmar mi reserva.",
         questionnaireInfo: "*RESPUESTAS DEL CUESTIONARIO*\n{respuestas}",
         treatmentType: "cirugía plástica"
       }
@@ -131,12 +131,12 @@ const CLIENTS_CONFIG = {
    treatments: [
       {
         name: "Consulta de Evaluación",
-        initialPrice: 20000,
+        initialPrice: 40000,
         regularPrice: 40000,
         monthlyFee: null,
-        isOffer: true,
-        highlightText: "$20.000 (Reserva 50%)",
-        customNote: "El 50% restante se abona el día de la consulta"
+        isOffer: false,
+        highlightText: "$40.000 (Pago total anticipado)",
+        customNote: "Pago requerido para confirmar el turno"
       },
       {
         name: "Lipoescultura",
