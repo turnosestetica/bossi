@@ -55,4 +55,4 @@ Documento de los cambios aplicados a la landing publicada (`index.html`).
   2. `POST` guardado del lead (`0dc8f34f…`)
   3. redirección a Mercado Pago
 - Se mantienen los eventos de pixel existentes (`PasoN_*`, `CitaFiltro`) y se agrega `Lead` al iniciar el pago.
-- La página de agradecimiento (`gracias-pago-bossi.html`) no se modificó.
+- La página de agradecimiento (`gracias-pago-bossi.html`) ahora toma el valor de `Purchase` desde `config.js` (antes quedó fijo en $17.500).

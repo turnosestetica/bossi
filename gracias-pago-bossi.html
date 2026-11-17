@@ -29,9 +29,18 @@
     
     // Disparar evento de compra al cargar la página
     document.addEventListener('DOMContentLoaded', function() {
+        // El precio sale de config.js para no quedar desactualizado.
+        let consultationPrice = 40000;
+        if (typeof CLIENTS_CONFIG !== 'undefined') {
+            const client = CLIENTS_CONFIG['bossi'] || CLIENTS_CONFIG[Object.keys(CLIENTS_CONFIG)[0]];
+            if (client && client.clinic && client.clinic.consultationPrice) {
+                consultationPrice = Number(client.clinic.consultationPrice);
+            }
+        }
+
         console.log('Disparando evento Purchase en Facebook Pixel');
         fbq('track', 'Purchase', {
-            value: 17500,
+            value: consultationPrice,
             currency: 'ARS',
             content_name: 'Consulta de Evaluación - Dra. Constanza Bossi',
             content_type: 'product',
