@@ -989,8 +989,6 @@
                 landingUrl: window.location.href,
                 respuestas: buildAnswersText(doubt),
                 respuestas_detalladas: buildAnswersMap(),
-                // El flujo ya no ofrece videollamada: se mantiene el campo para no romper la automatización.
-                videollamada_previa: 'No',
                 peso: window.answers.weight ? window.answers.weight.value : '',
                 altura: window.answers.height ? window.answers.height.value : '',
                 duda_principal: doubt,

@@ -6,7 +6,7 @@ Documento de los cambios aplicados a la landing publicada (`index.html`).
 
 - Se quitó del cuestionario la pregunta *"¿Te gustaría tener una mini videollamada de 10 minutos previa a la cita?"* (`config.js`, clave `videocall`).
 - El cuestionario pasó de 8 a 7 preguntas.
-- El payload que se envía al webhook sigue incluyendo `videollamada_previa: "No"` para no romper la automatización existente, pero ya no se le pregunta a la persona.
+- Se eliminó también el campo `videollamada_previa` del payload que se envía al webhook: no queda ninguna referencia a videollamada en el sitio. Si el workflow de n8n que recibe el lead lo consume, hay que quitar ese mapeo (ya no va a llegar).
 - El orden de las preguntas cambió: peso y altura quedan antes de *"¿Cuándo te gustaría realizarte el procedimiento?"*, para cerrar la evaluación con una pregunta simple.
 
 ## 2. Estructura de pantalla
