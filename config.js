@@ -22,9 +22,9 @@ const CLIENTS_CONFIG = {
       mainTitle: "¿Eres candidato para cirugía plástica?",
       subtitle: "Responde unas breves preguntas y descubre si calificas para una consulta con la Dra. Constanza Bossi, cirujana plástica en Tucumán.",
       startButtonText: "Evaluar Gratis Ahora",
-      appointmentButtonText: "Ver disponibilidad",
-      qualificationTitle: "¡Buenas noticias!",
-      qualificationMessage: "Basado en tus respuestas, eres un buen candidato para una consulta con la Dra. Constanza Bossi.",
+      appointmentButtonText: "Ver turnos disponibles →",
+      qualificationTitle: "Podrías ser candidato",
+      qualificationMessage: "Según tus respuestas, podés avanzar con una consulta de evaluación con la Dra. Bossi. Elegí día y horario: el turno queda confirmado con el pago.",
       qualificationAction: "Agenda una consulta para recibir una evaluación personalizada.",
       priceNote: "Podrías ser candidato para un procedimiento de cirugía plástica. Para comprobarlo, solicita una cita de evaluación.",
     confirmationText: {
@@ -80,16 +80,6 @@ const CLIENTS_CONFIG = {
         key: "medical_condition"
       },
       {
-        question: "¿Cuándo te gustaría realizarte el procedimiento?",
-        options: ["Lo antes posible", "En los próximos 3 meses", "En los próximos 6 meses", "Solo estoy explorando opciones"],
-        key: "timeframe"
-      },
-      {
-        question: "¿Te gustaría tener una mini videollamada de 10 minutos previa a la cita?",
-        options: ["Sí, me interesa", "No, prefiero solo la cita presencial"],
-        key: "videocall"
-      },
-      {
         question: "¿Cuál es tu peso aproximado?",
         options: [
           "Menos de 45 kg",
@@ -124,6 +114,11 @@ const CLIENTS_CONFIG = {
           "Más de 1.90 m"
         ],
         key: "height"
+      },
+      {
+        question: "¿Cuándo te gustaría realizarte el procedimiento?",
+        options: ["Lo antes posible", "En los próximos 3 meses", "En los próximos 6 meses", "Solo estoy explorando opciones"],
+        key: "timeframe"
       }
     ],
 

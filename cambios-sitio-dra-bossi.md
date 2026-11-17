@@ -87,6 +87,8 @@ questions: [
 
 ### 4.1. Campo para Videollamada Previa de 10 Minutos
 
+> **Actualización (noviembre 2026):** esta pregunta se eliminó del cuestionario. El flujo ya no ofrece videollamada y el campo `videollamada_previa` se envía siempre como `"No"` por compatibilidad con la automatización. Ver `cambios-flujo-2026-11.md`.
+
 Se agregó una pregunta específica para la opción de videollamada previa:
 
 ```javascript

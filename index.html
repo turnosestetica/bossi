@@ -2,15 +2,21 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dra. Constanza Bossi - Evaluación de Cirugía Plástica</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Dra. Constanza Bossi | Evaluación para cirugía plástica en Tucumán</title>
+    <meta name="description" content="Respondé 7 preguntas y descubrí si podés avanzar con una consulta de cirugía plástica con la Dra. Constanza Bossi, en San Miguel de Tucumán. Turnos con pago anticipado.">
+    <meta name="theme-color" content="#8e44ad">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Dra. Constanza Bossi | Evaluación para cirugía plástica">
+    <meta property="og:description" content="Evaluación gratuita en 1 minuto. Reservá tu consulta con la Dra. Constanza Bossi en Tucumán.">
+    <meta property="og:image" content="https://turnosestetica.github.io/bossi/images/drabossi.jpg">
+    <meta property="og:url" content="https://turnosestetica.github.io/bossi/">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%238e44ad'/%3E%3Ctext x='32' y='43' font-family='Arial' font-size='30' font-weight='bold' fill='white' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
+
     <link rel="stylesheet" href="landing.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Archivo de configuración -->
-    <script src="config.js"></script>
 
     <!-- Meta Pixel Code -->
     <script>
@@ -26,9 +32,9 @@
     function initFacebookPixel() {
         const path = window.location.pathname;
         const filename = path.substring(path.lastIndexOf('/') + 1).replace('.html', '');
-        let pixelId = '1222298238852708'; 
+        let pixelId = '1222298238852708';
 
-        if (CLIENTS_CONFIG && CLIENTS_CONFIG[filename] &&
+        if (typeof CLIENTS_CONFIG !== 'undefined' && CLIENTS_CONFIG[filename] &&
             CLIENTS_CONFIG[filename].facebookPixel &&
             CLIENTS_CONFIG[filename].facebookPixel.id) {
             pixelId = CLIENTS_CONFIG[filename].facebookPixel.id;
@@ -48,221 +54,188 @@
     src="https://www.facebook.com/tr?id=1222298238852708&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Meta Pixel Code -->
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="landing.js"></script>
-
-    <style>
-        /* Spinner Overlay para Mercado Pago */
-        .mercadopago-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            color: white;
-            font-size: 18px;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .mercadopago-spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        /* Estilo simple para la lista de precios estática */
-        .price-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .price-item strong {
-            font-weight: 600;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
-        <div class="landing-content" id="landing-content" style="display: none;">
-            <h1 class="compact-title">¿Eres candidato para cirugía plástica?</h1>
-            <p class="simple-intro">Responde unas breves preguntas y descubre si calificas para una consulta con la Dra. Constanza Bossi, cirujana plástica en Tucumán.</p>
-            <button class="cta-button" id="start-quiz">Evaluar Gratis Ahora</button>
-        </div>
+        <header class="app-header">
+            <div class="app-doctor">
+                <img src="images/drabossi.jpg" alt="Dra. Constanza Bossi" class="app-doctor__photo" width="44" height="44">
+                <div class="app-doctor__text">
+                    <span class="app-doctor__name">Dra. Constanza Bossi</span>
+                    <span class="app-doctor__role">Cirujana plástica certificada · Tucumán</span>
+                </div>
+            </div>
+            <ol class="stepper" id="stepper" aria-label="Etapas del proceso">
+                <li class="stepper__item is-current" data-step="1">
+                    <span class="stepper__dot">1</span><span class="stepper__label">Evaluación</span>
+                </li>
+                <li class="stepper__item" data-step="2">
+                    <span class="stepper__dot">2</span><span class="stepper__label">Turno</span>
+                </li>
+                <li class="stepper__item" data-step="3">
+                    <span class="stepper__dot">3</span><span class="stepper__label">Pago</span>
+                </li>
+            </ol>
+        </header>
 
-        <div class="quiz-container" id="quiz-container" style="display: flex; opacity: 1;">
-            <div class="doctor-profile">
-                <img src="images/drabossi.jpg" alt="Dra. Constanza Bossi" class="doctor-image">
-                <div class="doctor-name">Dra. Constanza Bossi - Cirujana Plástica Certificada  en San Miguel de Tucumán.</div>
+        <noscript>
+            <p class="noscript-warning">Para completar la evaluación necesitás activar JavaScript. También podés escribirnos por <a href="https://wa.me/5493812093646" target="_blank" rel="noopener">WhatsApp</a>.</p>
+        </noscript>
+
+        <!-- Paso 1: evaluación -->
+        <section class="screen quiz-container" id="quiz-container" style="display: flex;">
+            <div class="quiz-top" id="quiz-top">
+                <div class="quiz-progress-label">
+                    <span id="progress-label">Pregunta 1 de 7</span>
+                    <span class="quiz-time">≈ 1 minuto</span>
+                </div>
+                <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuemin="1" aria-valuemax="7" aria-valuenow="1" aria-label="Progreso de la evaluación">
+                    <div class="progress" id="progress"></div>
+                </div>
             </div>
 
-            <div class="progress-bar">
-                <div class="progress" id="progress"></div>
-            </div>
-
-            <div class="question-container" id="question-container">
-                <!-- Questions will be inserted here by JavaScript -->
-            </div>
+            <div class="question-container" id="question-container"></div>
 
             <div class="location-error" id="location-error">
                 <h3>Gracias por tu interés</h3>
-                <p>Lamentablemente, no podemos avanzar con tu cita si no puedes visitarnos en nuestra ubicación.</p>
-                <p>Nuestros tratamientos requieren atención presencial en nuestra clínica ubicada en Santiago del Estero 60, Piso 6, Edificio EMSA, Tucumán.</p>
-                <button id="restart-quiz" class="restart-button">Volver al inicio</button>
+                <p>La consulta y los tratamientos son presenciales, así que no podemos avanzar si no podés visitarnos en Tucumán.</p>
+                <p class="location-error__address">Santiago del Estero 60, Piso 6, Edificio EMSA, San Miguel de Tucumán.</p>
+                <p class="location-error__note">Si más adelante podés viajar, volvé a completar la evaluación.</p>
+                <button type="button" id="restart-quiz" class="restart-button">Volver a empezar</button>
             </div>
 
-            <div class="buttons">
-                <button class="nav-button" id="prev-button" style="display: none;">← Regresar</button>
-                <button class="nav-button" id="next-button">Continuar →</button>
+            <div class="quiz-footer" id="quiz-footer">
+                <button type="button" class="quiz-back" id="prev-button" hidden>← Anterior</button>
+                <p class="quiz-hint" id="quiz-hint">Tocá una opción para continuar</p>
             </div>
-        </div>
+        </section>
 
-        <div class="results-container" id="results-container">
-            <div class="doctor-profile">
-                <img src="images/drabossi.jpg" alt="Dra. Constanza Bossi" class="doctor-image">
-                <div class="doctor-name">Dra. Constanza Bossi - Cirujana Plástica Certificada en San Miguel de Tucumán.</div>
-            </div>
+        <!-- Paso 2: resultado de la evaluación -->
+        <section class="screen results-container" id="results-container">
+            <div class="screen__scroll">
+                <button type="button" class="link-button results-back" id="results-back">← Corregir respuestas</button>
+                <h2 id="qualification-result">Podrías ser candidato</h2>
+                <p class="results-lead" id="results-lead">Según tus respuestas, podés avanzar con una consulta de evaluación con la Dra. Bossi.</p>
 
-            <h2 id="qualification-result"></h2>
+                <div class="pricing-info">
+                    <h3>Precios de referencia</h3>
 
-            <div class="pricing-info">
-                <h3>Precios de Referencia</h3>
+                    <!-- Valores estáticos de respaldo: landing.js los reemplaza con los de config.js -->
+                    <div class="price-grid" id="price-grid">
+                        <div class="price-item"><span>Lipoescultura</span> <strong>u$ 3800</strong></div>
+                        <div class="price-item"><span>Lipoabdominoplastia</span> <strong>u$ 4000</strong></div>
+                        <div class="price-item"><span>Aumento mamario</span> <strong>u$ 2800</strong></div>
+                        <div class="price-item"><span>Remodelación costal</span> <strong>u$ 4500</strong></div>
+                        <div class="price-item"><span>Toxina botulínica</span> <strong>u$ 320</strong></div>
+                        <div class="price-item"><span>Ácido hialurónico</span> <strong>u$ 300</strong></div>
+                        <div class="price-item"><span>Rinomodelación</span> <strong>u$ 320</strong></div>
+                    </div>
 
-    <!-- Precios estáticos actualizados -->
-                <div class="price-grid" id="price-grid">
-                    <div class="price-item"><span>Lipoescultura</span> <strong>u$ 3800</strong></div>
-                    <div class="price-item"><span>Lipoabdominoplastia</span> <strong>u$ 4000</strong></div>
-                    <div class="price-item"><span>Aumento mamario</span> <strong>u$ 2800</strong></div>
-                    <div class="price-item"><span>Remodelación costal</span> <strong>u$ 4500</strong></div>
-                    <div class="price-item"><span>Toxina botulínica</span> <strong>u$ 320</strong></div>
-                    <div class="price-item"><span>Ácido hialurónico</span> <strong>u$ 300</strong></div>
-                    <div class="price-item"><span>Rinomodelación</span> <strong>u$ 320</strong></div>
+                    <div class="payment-note">
+                        <h4>IMPORTANTE: PAGO DE CONSULTA</h4>
+                        <p>Para confirmar el turno es <strong>obligatorio</strong> abonar el total de la consulta: <strong data-amount>$40.000</strong>.</p>
+                        <p>Solo se confirman turnos con el pago acreditado. Si no completás el pago, el turno se libera automáticamente.</p>
+                    </div>
                 </div>
-
-             <div class="payment-note">
-                    <h4>IMPORTANTE: PAGO DE CONSULTA ($40.000)</h4>
-                    <p>Para confirmar tu cita es <strong>obligatorio</strong> realizar el pago total de <strong>$40.000</strong>.</p>
-                    <p>Solo se confirman citas con el pago acreditado con anterioridad.</p>
-                </div>
             </div>
 
-            <div class="cta-container">
-                <button id="appointment-button" class="appointment-button">Ver disponibilidad</button>
+            <div class="screen__footer">
+                <button type="button" id="appointment-button" class="appointment-button">Ver turnos disponibles →</button>
             </div>
-        </div>
+        </section>
 
-        <div class="form-container" id="form-container">
-            <div class="doctor-profile">
-                <img src="images/drabossi.jpg" alt="Dra. Constanza Bossi" class="doctor-image">
-                <div class="doctor-name">Dra. Constanza Bossi - Cirujana Plástica Certificada en San Miguel de Tucumán.</div>
-            </div>
+        <!-- Paso 3: turno y pago -->
+        <section class="screen form-container" id="form-container">
+            <div class="screen__scroll" id="form-scroll">
+                <div class="form-step is-active" id="form-step-1">
+                    <h2>Elegí día y horario</h2>
+                    <p class="form-subtitle">Turnos de la agenda de la Dra. Bossi. Horarios de Tucumán (GMT-3).</p>
 
-            <h2>Agenda tu consulta con la Dra. Constanza Bossi</h2>
-
-            <div class="form-steps">
-                <!-- Paso 1: Seleccionar fecha y hora -->
-                <div class="form-step" id="form-step-1">
-                    <form id="appointment-form" class="appointment-form">
-                        <div class="date-time-selector">
-                            <div class="selector-section">
-                                <h4>Selecciona una fecha</h4>
-                                <div class="date-grid" id="date-grid"></div>
-                                <div class="loading-dates" id="loading-dates">
-                                    <div class="loading-spinner-large"></div>
-                                    <p>Consultando fechas disponibles en la agenda de la Dra. Bossi...</p>
-                                    <p style="font-size: 0.9rem; margin-top: 5px; color: #666;">Este proceso puede tomar unos segundos. Por favor, espere.</p>
-                                </div>
-                                <input type="hidden" id="preferred-date" name="preferred-date" required>
+                    <div class="date-time-selector">
+                        <div class="selector-section">
+                            <h4>Fecha</h4>
+                            <div class="date-grid" id="date-grid"></div>
+                            <div class="loading-dates" id="loading-dates">
+                                <div class="loading-spinner-large"></div>
+                                <p>Consultando la agenda...</p>
                             </div>
-
-                            <div class="selector-section">
-                                <h4>Selecciona una hora</h4>
-                                <div class="time-grid" id="time-grid"></div>
-                                <div class="loading-times" id="loading-times">
-                                    <div class="loading-spinner-large"></div>
-                                    <p>Selecciona primero una fecha para ver los horarios disponibles</p>
-                                    <p style="font-size: 0.9rem; margin-top: 5px; color: #666;">Los horarios se mostrarán una vez que elijas una fecha</p>
-                                </div>
-                                <input type="hidden" id="preferred-time" name="preferred-time" required>
+                            <div class="empty-state" id="dates-empty" hidden>
+                                <p>No hay turnos publicados en este momento.</p>
+                                <p>Escribinos por <a id="dates-whatsapp" href="https://wa.me/5493812093646" target="_blank" rel="noopener">WhatsApp</a> y te avisamos cuando se abran nuevos.</p>
                             </div>
+                            <input type="hidden" id="preferred-date" name="preferred-date">
                         </div>
 
-                        <div class="selection-summary">
-                            <p>Tu cita: <span id="selected-date-display">Selecciona una fecha</span> a las <span id="selected-time-display">Selecciona una hora</span></p>
+                        <div class="selector-section" id="time-section">
+                            <h4>Horario</h4>
+                            <div class="time-grid" id="time-grid"></div>
+                            <div class="loading-times" id="loading-times" hidden>
+                                <div class="loading-spinner-large"></div>
+                                <p>Buscando horarios...</p>
+                            </div>
+                            <div class="empty-state" id="times-empty">
+                                <p>Elegí primero una fecha para ver los horarios disponibles.</p>
+                            </div>
+                            <input type="hidden" id="preferred-time" name="preferred-time">
                         </div>
+                    </div>
 
-                        <div class="centered-button-container">
-                            <button type="button" id="next-step-button" class="submit-button full-width">Continuar →</button>
-                        </div>
-                    </form>
+                    <p class="selection-summary" id="selection-summary">Elegí una fecha y un horario</p>
                 </div>
 
-                <!-- Paso 2: Datos personales -->
                 <div class="form-step" id="form-step-2" style="display: none;">
-                    <form id="personal-info-form" class="appointment-form">
-                        <div class="form-group">
-                            <label for="whatsapp">Número de WhatsApp (incluye 549 + código de área)</label>
-                            <input type="tel" id="whatsapp" name="whatsapp" value="549" placeholder="Ej. 549381XXXXXXX" required>
-                            <div id="whatsapp-validation" class="validation-message"></div>
-                        </div>
+                    <h2>Completá tus datos</h2>
+                    <p class="form-subtitle">Usamos tu WhatsApp para confirmar el turno.</p>
 
-                        <div class="form-group">
-                            <label for="fullname">Nombre y Apellido</label>
-                            <input type="text" id="fullname" name="fullname" placeholder="Ej. Juan Pérez" required>
-                        </div>
+                    <div class="appointment-summary">
+                        <p><span class="appointment-summary__label">Tu cita</span><strong id="summary-datetime">—</strong></p>
+                        <button type="button" class="link-button" id="change-slot-button">Cambiar</button>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="main_doubt">¿Cuál es tu principal duda sobre el procedimiento?</label>
-                            <input type="text" id="main_doubt" name="main_doubt" placeholder="Escribe aquí tu duda o pregunta" required>
-                        </div>
+                    <div class="form-group">
+                        <label for="whatsapp">WhatsApp</label>
+                        <input type="tel" id="whatsapp" name="whatsapp" value="549" placeholder="549 381 555 5555" inputmode="numeric" autocomplete="tel" required>
+                        <div id="whatsapp-validation" class="validation-message" role="status" aria-live="polite"></div>
+                    </div>
 
-                     <div class="payment-confirmation-checkbox">
-                            <label class="checkbox-container">
-                                <input type="checkbox" id="payment-confirmation-checkbox">
-                                <span class="checkmark"></span>
-                                <span id="payment-confirmation-text">Entiendo que si no abono el total de la consulta ($40.000) ahora, pierdo el turno para <span id="payment-date-time">la fecha y hora seleccionada</span></span>
-                            </label>
-                        </div>
+                    <div class="form-group">
+                        <label for="fullname">Nombre y apellido</label>
+                        <input type="text" id="fullname" name="fullname" placeholder="Ej. Juan Pérez" autocomplete="name" required>
+                    </div>
 
-                        <div class="confirmation-footer">
-                            <button type="button" id="prev-step-button" class="back-button">← Regresar</button>
-                            <div class="button-container">
-                                <button type="button" id="finish-button" class="submit-button" disabled>PAGAR CITA →</button>
-                                <div id="button-status-message" class="button-status-message">Debes confirmar que entiendes la política de pago</div>
-                            </div>
-                        </div>
-                    </form>
+                    <div class="form-group">
+                        <label for="main_doubt">¿Tenés alguna duda sobre el procedimiento? <span class="label-optional">(opcional)</span></label>
+                        <input type="text" id="main_doubt" name="main_doubt" placeholder="Escribila acá y la vemos en la consulta">
+                    </div>
+
+                    <p class="payment-explainer">Al continuar te llevamos a <strong>Mercado Pago</strong> para abonar <strong data-amount>$40.000</strong> (ARS).</p>
+
+                    <div class="payment-confirmation-checkbox">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="payment-confirmation-checkbox">
+                            <span class="checkmark"></span>
+                            <span>Entiendo que si no abono el total de la consulta (<strong data-amount>$40.000</strong>) ahora, pierdo el turno para <span id="payment-date-time">la fecha y hora elegidas</span>.</span>
+                        </label>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <div class="screen__footer form-footer" id="form-footer-1">
+                <button type="button" id="next-step-button" class="submit-button full-width" disabled>Continuar →</button>
+                <p class="footer-hint" id="next-step-hint">Elegí fecha y horario para continuar</p>
+            </div>
+
+            <div class="screen__footer form-footer" id="form-footer-2" hidden>
+                <div class="finish-row">
+                    <button type="button" id="prev-step-button" class="back-button" aria-label="Volver al paso anterior">←</button>
+                    <button type="button" id="finish-button" class="submit-button" disabled>PAGAR CITA →</button>
+                </div>
+                <p id="button-status-message" class="button-status-message" role="status" aria-live="polite">Verificá tu WhatsApp para continuar</p>
+            </div>
+        </section>
     </div>
+
+    <script src="config.js"></script>
+    <script src="landing.js"></script>
 </body>
 </html>
