@@ -33,10 +33,10 @@ Documento de los cambios aplicados a la landing publicada (`index.html`).
 
 ## 5. Turno
 
-- Fechas legibles ("vie 20 nov"), ordenadas de la más próxima a la más lejana y sin fechas pasadas.
+- Las fechas que devuelve la agenda (`"Miércoles 18 de Noviembre 2026"`) se muestran en formato corto (`"mié 18 nov"`), se ordenan de la más próxima a la más lejana y se descartan las pasadas. El valor que se envía al webhook sigue siendo el texto original de la agenda.
 - Horarios ordenados.
 - "Continuar" deshabilitado hasta elegir fecha **y** horario, con mensaje de ayuda.
-- Resumen progresivo: "Tu cita: mar 24 nov. Ahora elegí un horario." → "Tu cita: mar 24 nov a las 09:00 hs".
+- Resumen progresivo: "Tu cita: mié 18 nov. Ahora elegí un horario." → "Tu cita: mié 18 nov a las 17:20 hs".
 - Estados de agenda vacía y de error de red con botón **Reintentar** y acceso a WhatsApp (antes la pantalla quedaba en blanco).
 
 ## 6. Datos y pago

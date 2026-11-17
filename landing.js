@@ -67,15 +67,30 @@
 
     const MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
     const DAYS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+    const MONTH_NAMES = {
+        enero: 0, febrero: 1, marzo: 2, abril: 3, mayo: 4, junio: 5,
+        julio: 6, agosto: 7, septiembre: 8, setiembre: 8, octubre: 9,
+        noviembre: 10, diciembre: 11
+    };
 
     function parseDateValue(value) {
         if (!value) return null;
         const raw = String(value).trim();
+
         let match = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
         if (match) return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
 
         match = raw.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})/);
         if (match) return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+
+        // Formato de la agenda: "Miércoles 18 de Noviembre 2026"
+        match = raw.match(/(\d{1,2})\s+de\s+([a-záéíóúñ]+)(?:\s+de\s+(\d{4}))?/i);
+        if (match) {
+            const month = MONTH_NAMES[match[2].toLowerCase()];
+            if (month !== undefined) {
+                return new Date(Number(match[3] || new Date().getFullYear()), month, Number(match[1]));
+            }
+        }
 
         const parsed = new Date(raw);
         return Number.isNaN(parsed.getTime()) ? null : parsed;
@@ -85,6 +100,12 @@
         const date = parseDateValue(value);
         if (!date) return String(value || '');
         return `${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]}`;
+    }
+
+    function formatTimeLabel(value) {
+        const raw = String(value || '').trim();
+        if (!raw) return '';
+        return /hs|hrs|\bh\b/i.test(raw) ? raw : raw + ' hs';
     }
 
     function startOfToday() {
@@ -117,6 +138,7 @@
     window.BossiFlow = {
         parseDateValue: parseDateValue,
         formatDateLabel: formatDateLabel,
+        formatTimeLabel: formatTimeLabel,
         sortDateValues: sortDateValues,
         sortTimes: sortTimes,
         isPastDate: isPastDate,
@@ -773,7 +795,7 @@
             const strongDate = document.createElement('strong');
             strongDate.textContent = formatDateLabel(date);
             const strongTime = document.createElement('strong');
-            strongTime.textContent = time + ' hs';
+            strongTime.textContent = formatTimeLabel(time);
 
             el.selectionSummary.textContent = 'Tu cita: ';
             el.selectionSummary.appendChild(strongDate);
@@ -824,7 +846,9 @@
             const ready = Boolean(date && time);
 
             if (el.summaryDatetime) {
-                el.summaryDatetime.textContent = ready ? formatDateLabel(date) + ' · ' + time + ' hs' : '—';
+                el.summaryDatetime.textContent = ready
+                    ? formatDateLabel(date) + ' · ' + formatTimeLabel(time)
+                    : '—';
             }
             if (el.paymentDatetime) {
                 el.paymentDatetime.textContent = ready
